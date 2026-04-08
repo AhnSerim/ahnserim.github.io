@@ -1,8 +1,7 @@
 ---
 layout: default
-title: 홈
+title: serim.space
 ---
 
-# 안녕하세요
-
-제 GitHub 블로그입니다.
+# Hello World!
+개발 및 독서기록
