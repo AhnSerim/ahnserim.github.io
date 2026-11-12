@@ -1,0 +1,35 @@
+{%- comment -%}
+  Decorative background: two tiled pixel-star layers (CSS) + a pixel planet
+  and a small ship (inline SVG). Purely decorative → aria-hidden.
+{%- endcomment -%}
+<div class="space-bg" aria-hidden="true">
+  <div class="space-bg__stars space-bg__stars--far"></div>
+  <div class="space-bg__stars space-bg__stars--near"></div>
+
+  <svg class="space-bg__planet" viewBox="0 0 16 16" width="160" height="160" shape-rendering="crispEdges">
+    <g fill="#3a2a7a">
+      <rect x="5" y="1" width="6" height="1"/><rect x="3" y="2" width="10" height="1"/>
+      <rect x="2" y="3" width="12" height="2"/><rect x="1" y="5" width="14" height="6"/>
+      <rect x="2" y="11" width="12" height="2"/><rect x="3" y="13" width="10" height="1"/>
+      <rect x="5" y="14" width="6" height="1"/>
+    </g>
+    <g fill="#5b44b0">
+      <rect x="5" y="2" width="4" height="1"/><rect x="3" y="3" width="6" height="2"/>
+      <rect x="2" y="5" width="5" height="3"/>
+    </g>
+    <g fill="#ff7ad9" opacity=".55">
+      <rect x="0" y="8" width="16" height="1"/><rect x="2" y="9" width="12" height="1"/>
+    </g>
+  </svg>
+
+  <svg class="space-bg__ship" viewBox="0 0 12 8" width="48" height="32" shape-rendering="crispEdges">
+    <rect x="4" y="0" width="4" height="1" fill="#5ef0ff"/>
+    <rect x="2" y="1" width="8" height="3" fill="#e8ebff"/>
+    <rect x="5" y="2" width="2" height="1" fill="#5ef0ff"/>
+    <rect x="0" y="3" width="12" height="2" fill="#a9b0d6"/>
+    <rect x="2" y="5" width="2" height="1" fill="#ffe066"/>
+    <rect x="8" y="5" width="2" height="1" fill="#ffe066"/>
+    <rect x="2" y="6" width="2" height="2" fill="#ff7ad9" class="space-bg__flame"/>
+    <rect x="8" y="6" width="2" height="2" fill="#ff7ad9" class="space-bg__flame"/>
+  </svg>
+</div>

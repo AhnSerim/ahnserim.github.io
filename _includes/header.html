@@ -1,0 +1,30 @@
+<header class="site-header">
+  <div class="container site-header__inner">
+    <a class="site-logo" href="{{ '/' | relative_url }}" aria-label="{{ site.title }} 홈">
+      <svg class="site-logo__icon" viewBox="0 0 8 8" width="24" height="24" aria-hidden="true" shape-rendering="crispEdges">
+        <rect x="3" y="0" width="2" height="1" fill="#5ef0ff"/>
+        <rect x="2" y="1" width="4" height="4" fill="#e8ebff"/>
+        <rect x="3" y="2" width="2" height="1" fill="#5ef0ff"/>
+        <rect x="1" y="4" width="1" height="3" fill="#ff7ad9"/>
+        <rect x="6" y="4" width="1" height="3" fill="#ff7ad9"/>
+        <rect x="3" y="5" width="2" height="1" fill="#e8ebff"/>
+        <rect x="3" y="6" width="2" height="2" fill="#ffe066"/>
+      </svg>
+      <span class="site-logo__text">serim<span class="site-logo__dot">.</span>space</span>
+    </a>
+
+    <button class="nav-toggle" type="button" aria-controls="site-nav" aria-expanded="false" hidden>
+      <svg class="nav-toggle__icon nav-toggle__icon--open" viewBox="0 0 7 7" width="21" height="21" aria-hidden="true" shape-rendering="crispEdges">
+        <rect x="0" y="1" width="7" height="1" fill="currentColor"/>
+        <rect x="0" y="3" width="7" height="1" fill="currentColor"/>
+        <rect x="0" y="5" width="7" height="1" fill="currentColor"/>
+      </svg>
+      <svg class="nav-toggle__icon nav-toggle__icon--close" viewBox="0 0 7 7" width="21" height="21" aria-hidden="true" shape-rendering="crispEdges">
+        <path fill="currentColor" d="M0 0h1v1h-1zM1 1h1v1h-1zM2 2h1v1h-1zM3 3h1v1h-1zM4 4h1v1h-1zM5 5h1v1h-1zM6 6h1v1h-1zM6 0h1v1h-1zM5 1h1v1h-1zM4 2h1v1h-1zM2 4h1v1h-1zM1 5h1v1h-1zM0 6h1v1h-1z"/>
+      </svg>
+      <span class="visually-hidden">메뉴 열기</span>
+    </button>
+
+    {% include nav.html %}
+  </div>
+</header>
