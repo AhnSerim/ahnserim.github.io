@@ -1,0 +1,88 @@
+// ==========================================================================
+// Pixel-art primitives: stepped-corner boxes, 8-bit buttons, chips.
+// Corners are "notched" with clip-path so boxes look hand-drawn on a grid.
+// ==========================================================================
+
+// Stepped corner: cuts one pixel-unit off each corner.
+@mixin pixel-corners($u: var(--px)) {
+  clip-path: polygon(
+    0 $u, $u $u, $u 0,
+    calc(100% - #{$u}) 0, calc(100% - #{$u}) $u, 100% $u,
+    100% calc(100% - #{$u}), calc(100% - #{$u}) calc(100% - #{$u}), calc(100% - #{$u}) 100%,
+    $u 100%, $u calc(100% - #{$u}), 0 calc(100% - #{$u})
+  );
+}
+
+// Box with a solid pixel border. Pair with --pixel-shadow(-lg) for the
+// hard 8-bit drop shadow (don't combine with pixel-corners: clip-path
+// would cut the shadow off).
+@mixin pixel-box($bg: var(--c-space-800), $border: var(--c-border)) {
+  position: relative;
+  background: $bg;
+  border: var(--px) solid $border;
+  border-radius: 0;
+}
+
+.pixel-box {
+  @include pixel-box;
+  padding: var(--sp-4);
+  box-shadow: var(--pixel-shadow-lg);
+}
+
+// ---- Buttons --------------------------------------------------------------
+.pixel-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sp-2);
+  min-height: 44px;            // touch target
+  padding: var(--sp-2) var(--sp-3);
+  font-family: var(--font-pixel);
+  font-size: var(--fs-sm);
+  line-height: 1;
+  color: var(--c-space-900);
+  background: var(--c-star);
+  border: var(--px) solid var(--c-space-900);
+  border-radius: 0;
+  box-shadow: var(--pixel-shadow);
+  text-decoration: none;
+  cursor: pointer;
+  transition: transform var(--dur-fast) var(--ease-step),
+              box-shadow var(--dur-fast) var(--ease-step);
+
+  &:hover { color: var(--c-space-900); transform: translate(-2px, -2px); box-shadow: 6px 6px 0 0 var(--c-shadow); }
+  &:active { transform: translate(var(--px), var(--px)); box-shadow: none; }
+
+  &--ghost {
+    color: var(--c-text);
+    background: transparent;
+    border-color: var(--c-border);
+    &:hover { color: var(--c-star); border-color: var(--c-star); }
+  }
+}
+
+// ---- Chips (tags / section labels) ---------------------------------------
+.pixel-chip {
+  display: inline-block;
+  padding: 2px var(--sp-2);
+  font-family: var(--font-pixel);
+  font-size: var(--fs-xs);
+  line-height: 1.6;
+  color: var(--c-nebula);
+  border: 2px solid currentColor;
+  text-decoration: none;
+  &:hover { color: var(--c-space-900); background: var(--c-nebula); }
+
+  &--study   { color: var(--c-plasma); &:hover { background: var(--c-plasma); } }
+  &--reading { color: var(--c-nebula); }
+}
+
+// Small pixel "cursor" bullet, e.g. before headings or active nav item.
+.pixel-caret::before {
+  content: "";
+  display: inline-block;
+  width: 8px; height: 8px;
+  margin-right: var(--sp-2);
+  background: currentColor;
+  vertical-align: middle;
+  @include pixel-corners(2px);
+}
