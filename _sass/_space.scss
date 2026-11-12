@@ -17,8 +17,12 @@ $stars-near: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' w
 
 .space-bg__stars {
   position: absolute;
-  inset: 0;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: -560px;            // one extra tile of room for scroll parallax
   image-rendering: pixelated;
+  will-change: transform;
 }
 .space-bg__stars--far {
   background-image: $stars-far;
