@@ -1,0 +1,17 @@
+---
+layout: default
+---
+<div class="container">
+  <header class="page-hero">
+    {%- if page.kicker %}
+    <p class="page-hero__kicker"><span class="pixel-caret" aria-hidden="true"></span>{{ page.kicker }}</p>
+    {%- endif %}
+    <h1 class="page-hero__title">{{ page.title }}</h1>
+    {%- if page.description %}
+    <p class="page-hero__desc">{{ page.description }}</p>
+    {%- endif %}
+  </header>
+  <div class="prose">
+    {{ content }}
+  </div>
+</div>

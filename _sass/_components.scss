@@ -23,7 +23,7 @@
   margin: 0 0 var(--sp-3);
   font-size: calc(var(--fs-2xl) * 1.25);
   color: var(--c-text);
-  text-shadow: var(--px) var(--px) 0 var(--c-shadow), 0 0 0 transparent;
+  text-shadow: var(--px) var(--px) 0 var(--c-shadow);
 }
 .page-hero__desc {
   max-width: 60ch;

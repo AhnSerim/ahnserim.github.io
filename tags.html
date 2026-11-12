@@ -1,0 +1,44 @@
+---
+layout: default
+title: Tags
+permalink: /tags/
+description: "태그별로 모아 보기"
+---
+{%- assign tags = site.tags | sort -%}
+<div class="container">
+  <header class="page-hero">
+    <p class="page-hero__kicker"><span class="pixel-caret" aria-hidden="true"></span>STAR MAP</p>
+    <h1 class="page-hero__title">Tags</h1>
+    <p class="page-hero__desc">{{ page.description }}</p>
+  </header>
+
+  {%- if tags.size > 0 %}
+  <nav aria-label="태그 목록">
+    <ul class="tag-list tag-cloud">
+      {%- for tag in tags %}
+      <li><a class="pixel-chip" href="#{{ tag[0] | slugify }}">#{{ tag[0] }} <span class="tag-cloud__count">{{ tag[1].size }}</span></a></li>
+      {%- endfor %}
+    </ul>
+  </nav>
+
+  {%- for tag in tags %}
+  <section class="tag-section" id="{{ tag[0] | slugify }}" aria-labelledby="t-{{ tag[0] | slugify }}">
+    <h2 class="tag-section__title" id="t-{{ tag[0] | slugify }}">#{{ tag[0] }}</h2>
+    <ul class="tag-section__list">
+      {%- for post in tag[1] %}
+      <li>
+        <time datetime="{{ post.date | date_to_xmlschema }}">{{ post.date | date: '%Y.%m.%d' }}</time>
+        <a href="{{ post.url | relative_url }}">{{ post.title | escape }}</a>
+        {%- if post.section %} <span class="pixel-chip pixel-chip--{{ post.section }}">{{ post.section | capitalize }}</span>{% endif %}
+      </li>
+      {%- endfor %}
+    </ul>
+  </section>
+  {%- endfor %}
+  {%- else %}
+  <div class="empty-state pixel-box">
+    <p class="empty-state__title">NO TAGS YET</p>
+    <p>글의 front matter에 <code>tags: [c, cpp]</code>처럼 태그를 달면 여기에 모입니다.</p>
+  </div>
+  {%- endif %}
+</div>
