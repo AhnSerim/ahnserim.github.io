@@ -25,8 +25,8 @@ kramdown:
 giscus:
   repo: AhnSerim/ahnserim.github.io
   repo_id: R_kgDOR9F2pg
-  category: Guestbook
-  category_id: "" # e.g. DIC_kwDO...
+  category: Announcements # only maintainers/giscus can open threads; anyone can comment
+  category_id: DIC_kwDOR9F2ps4DK83P
   term: guestbook # every visitor writes into this single discussion
 
 plugins:

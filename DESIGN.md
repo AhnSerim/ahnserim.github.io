@@ -182,7 +182,7 @@ UI는 레트로 게임(부팅 화면, SECTOR, GAME OVER, ◀ PREV / NEXT ▶)의
 | 포스트 상세 | `_layouts/post.html`, `_post.scss` | breadcrumb `/` 구분, 날짜·N분 읽기·섹션 칩, Reading은 `BOOK DATA` 박스, 하단 태그 · `◀ PREV / NEXT ▶` 페이저 · 목록으로 버튼 |
 | 본문 (prose) | `_prose.scss` | h2 앞 `▸ ` + 하단 실선, h3 시안, ul 마커 `■` 노랑, 인용문 좌측 8px 핑크 바, 이미지 테두리+그림자, 코드블록 상단에 언어 라벨 바(`C`, `C++`, `ASM`…) |
 | 빈 상태 | `.empty-state` | `NO SIGNAL…` 깜빡임 |
-| 방명록 | `guestbook.html`, `_includes/giscus.html`, `.guestbook` | kicker `SIGNAL STATION · 방명록`, `HOW TO TRANSMIT` 안내 박스 + giscus(GitHub Discussions) 위젯. 설정은 `_config.yml`의 `giscus:`. 미설정 시 `SIGNAL OFFLINE` 빈 상태 |
+| 방명록 | `guestbook.html`, `_includes/giscus.html`, `.guestbook` | kicker `SIGNAL STATION · 방명록`, `HOW TO TRANSMIT` 안내 박스 + giscus(GitHub Discussions, Announcements 카테고리의 `guestbook` 글타래) 위젯. 설정은 `_config.yml`의 `giscus:`. 미설정 시 `SIGNAL OFFLINE` 빈 상태 |
 | giscus 테마 | `assets/css/giscus.css` | iframe 내부라 사이트 토큰을 못 씀 → 토큰 값을 **직접 복사**. 토큰 변경 시 이 파일도 함께 수정. 각진 모서리, 4px 테두리 + 하드 그림자, 픽셀 폰트 버튼 |
 | 읽기 진행 게이지 | `.scroll-progress` (헤더, 포스트에서만) | 헤더 하단 테두리 위에 12px 채움 + 4px 간격의 세그먼트 바. 16px 단위로만 차오름. 섹션색 |
 | 404 | `404.html` | 큰 핑크 `404` + `GAME OVER` + `▶ CONTINUE` 버튼 |
