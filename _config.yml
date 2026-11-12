@@ -19,6 +19,16 @@ kramdown:
   syntax_highlighter_opts:
     css_class: highlight
 
+# Guestbook (giscus → GitHub Discussions). The guestbook shows a
+# "SIGNAL OFFLINE" notice until category_id is filled in.
+# Get the values at https://giscus.app after enabling Discussions.
+giscus:
+  repo: AhnSerim/ahnserim.github.io
+  repo_id: R_kgDOR9F2pg
+  category: Guestbook
+  category_id: "" # e.g. DIC_kwDO...
+  term: guestbook # every visitor writes into this single discussion
+
 plugins:
   - jekyll-seo-tag
 
@@ -32,5 +42,7 @@ exclude:
   - Gemfile
   - Gemfile.lock
   - README.md
+  - DESIGN.md
+  - CLAUDE.md
   - vendor
   - .jekyll-cache

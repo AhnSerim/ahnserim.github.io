@@ -107,6 +107,30 @@
   time { font-family: var(--font-pixel); font-size: var(--fs-xs); color: var(--c-text-dim); }
 }
 
+// ---- Guestbook ------------------------------------------------------------
+.guestbook {
+  max-width: var(--content-w);
+  > * + * { margin-top: var(--sp-5); }
+}
+.guestbook__guide-label {
+  margin: 0 0 var(--sp-3);
+  font-family: var(--font-pixel);
+  font-size: var(--fs-xs);
+  letter-spacing: .08em;
+  color: var(--c-star);
+}
+.guestbook__steps {
+  margin: 0;
+  padding-left: 1.5em;
+  font-size: var(--fs-sm);
+  color: var(--c-text-dim);
+  li + li { margin-top: var(--sp-1); }
+  li::marker { font-family: var(--font-pixel); color: var(--c-star); }
+}
+.guestbook__board {
+  min-height: 240px; // reserve room while the giscus iframe loads
+}
+
 // ---- 404 ------------------------------------------------------------------
 .not-found {
   max-width: 560px;

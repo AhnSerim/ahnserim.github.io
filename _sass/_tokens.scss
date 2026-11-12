@@ -67,6 +67,8 @@ $bp-mobile: 767px;  // ~767px
   /* ---- Motion ---- */
   --dur-fast: 120ms;
   --ease-step: steps(2, end); /* 8-bit feel */
+  --dur-reveal: 400ms;
+  --ease-reveal: steps(4, end); /* 16px rise in 4px jumps */
 }
 
 @include tablet {

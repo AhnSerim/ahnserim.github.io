@@ -27,4 +27,9 @@
 
     {% include nav.html %}
   </div>
+  {%- if page.layout == 'post' %}
+  <div class="scroll-progress scroll-progress--{{ page.section | default: 'log' }}" aria-hidden="true">
+    <span class="scroll-progress__bar"></span>
+  </div>
+  {%- endif %}
 </header>

@@ -28,7 +28,7 @@ layout: default
       </p>
 
       {%- if page.book %}
-      <aside class="book-info pixel-box" aria-label="책 정보">
+      <aside class="book-info pixel-box" aria-label="책 정보" data-reveal>
         <p class="book-info__label">BOOK DATA</p>
         <dl>
           <dt>제목</dt><dd><cite>{{ page.book.title | escape }}</cite></dd>
@@ -60,7 +60,7 @@ layout: default
       {%- endif %}
 
       {%- if page.previous or page.next %}
-      <nav class="post-pager" aria-label="이전/다음 글">
+      <nav class="post-pager" aria-label="이전/다음 글" data-reveal>
         {%- if page.previous %}
         <a class="post-pager__link post-pager__link--prev" href="{{ page.previous.url | relative_url }}" rel="prev">
           <span class="post-pager__dir">◀ PREV</span>

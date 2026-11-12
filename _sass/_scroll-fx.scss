@@ -1,0 +1,43 @@
+// ==========================================================================
+// Scroll effects (driven by assets/js/scroll-fx.js).
+// ==========================================================================
+
+// ---- Reveal: "pixel-rise" -------------------------------------------------
+// `.fx-reveal` is added in <head> only when motion is allowed and
+// IntersectionObserver exists, so without JS everything stays visible.
+// Selector list must match REVEAL in scroll-fx.js.
+.fx-reveal :is([data-reveal], .prose > h2, .prose > h3, .prose > blockquote, .prose > div.highlighter-rouge, .prose > figure, .prose > table):not(.is-revealed) {
+  opacity: 0;
+}
+
+.fx-reveal .is-revealed {
+  // `backwards` (not `both`): once finished, the element's own transform
+  // (e.g. card hover lift) takes over again.
+  animation: pixel-rise var(--dur-reveal) var(--ease-reveal) var(--reveal-delay, 0ms) backwards;
+}
+
+@keyframes pixel-rise {
+  from { opacity: 0; transform: translateY(var(--sp-3)); }
+  to   { opacity: 1; transform: none; }
+}
+
+// ---- Reading progress gauge (posts) ---------------------------------------
+// Sits on the header's bottom border; fills in whole 16px segments.
+.scroll-progress {
+  --accent: var(--c-star);
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: calc(var(--px) * -1);
+  height: var(--px);
+  pointer-events: none;
+
+  &--study   { --accent: var(--c-plasma); }
+  &--reading { --accent: var(--c-nebula); }
+}
+.scroll-progress__bar {
+  display: block;
+  height: 100%;
+  background: repeating-linear-gradient(90deg, var(--accent) 0 12px, transparent 12px 16px);
+  clip-path: inset(0 calc((1 - var(--progress, 0)) * 100%) 0 0);
+}

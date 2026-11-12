@@ -1,0 +1,131 @@
+/* ==========================================================================
+   giscus custom theme — "space + pixel art" (see DESIGN.md).
+   Loaded inside the giscus iframe, so the site's CSS variables are NOT
+   available here: values below mirror _sass/_tokens.scss by hand.
+   Keep them in sync when tokens change.
+   ========================================================================== */
+
+@import url("https://giscus.app/themes/dark.css");
+@import url("https://cdn.jsdelivr.net/npm/galmuri@2.40.3/dist/galmuri.css");
+@import url("https://cdn.jsdelivr.net/npm/pretendard@1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css");
+
+main {
+  /* surfaces: space-900 / 800 / 700 / 600 */
+  --color-canvas-default: #0e1433;
+  --color-canvas-overlay: #0e1433;
+  --color-canvas-inset: #070a1c;
+  --color-canvas-subtle: #1a2250;
+  --color-neutral-muted: rgba(90, 107, 208, .3);
+
+  /* text */
+  --color-fg-default: #e8ebff;
+  --color-fg-muted: #a9b0d6;
+  --color-fg-subtle: #a9b0d6;
+
+  /* borders */
+  --color-border-default: #5a6bd0;
+  --color-border-muted: #26306a;
+  --color-primer-border-active: #ffe066;
+
+  /* accents: star (primary) / plasma (links, focus) */
+  --color-accent-fg: #5ef0ff;
+  --color-accent-emphasis: #5ef0ff;
+  --color-accent-muted: rgba(94, 240, 255, .4);
+  --color-accent-subtle: rgba(94, 240, 255, .12);
+
+  /* buttons */
+  --color-btn-text: #e8ebff;
+  --color-btn-bg: #0e1433;
+  --color-btn-border: #5a6bd0;
+  --color-btn-hover-bg: #1a2250;
+  --color-btn-hover-border: #ffe066;
+  --color-btn-active-bg: #26306a;
+  --color-btn-active-border: #ffe066;
+  --color-btn-selected-bg: #26306a;
+  --color-btn-shadow: none;
+  --color-btn-inset-shadow: none;
+
+  --color-btn-primary-text: #070a1c;
+  --color-btn-primary-bg: #ffe066;
+  --color-btn-primary-border: #070a1c;
+  --color-btn-primary-hover-bg: #ffe066;
+  --color-btn-primary-hover-border: #070a1c;
+  --color-btn-primary-selected-bg: #ffe066;
+  --color-btn-primary-shadow: none;
+  --color-btn-primary-inset-shadow: none;
+  --color-btn-primary-disabled-text: #a9b0d6;
+  --color-btn-primary-disabled-bg: #26306a;
+  --color-btn-primary-disabled-border: #26306a;
+
+  --color-segmented-control-bg: #070a1c;
+  --color-segmented-control-button-bg: #1a2250;
+  --color-segmented-control-button-selected-border: #5a6bd0;
+
+  /* reactions: nebula */
+  --color-social-reaction-border: #5a6bd0;
+  --color-social-reaction-bg-hover: #1a2250;
+  --color-social-reaction-bg-reacted-hover: rgba(255, 122, 217, .25);
+
+  color-scheme: dark;
+  font-family: "Pretendard Variable", "Pretendard", system-ui, -apple-system,
+               "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
+  word-break: keep-all;
+}
+
+/* No rounded corners anywhere — avatars become square pixels too. */
+main *,
+main *::before,
+main *::after { border-radius: 0 !important; }
+
+/* Pixel font for UI labels / counts / buttons. */
+.gsc-comments-count,
+.gsc-reactions-count,
+.gsc-comment-author,
+.gsc-comment-header time,
+.gsc-comment-box-tabs,
+.btn {
+  font-family: "Galmuri11", "DungGeunMo", "Courier New", monospace !important;
+  font-weight: 400 !important;
+}
+
+/* Pixel frames: 4px solid border + hard shadow, like .post-card. */
+.gsc-comment-box,
+.gsc-comment > div {
+  border: 4px solid #5a6bd0 !important;
+  box-shadow: 4px 4px 0 0 #000;
+}
+
+.gsc-comment-box textarea,
+.gsc-comment-box textarea:focus {
+  background: #070a1c;
+  color: #e8ebff;
+}
+
+/* 8-bit buttons: lift on hover, press on active (steps easing). */
+.btn {
+  transition: transform 120ms steps(2, end), box-shadow 120ms steps(2, end);
+}
+.btn-primary {
+  border-width: 4px !important;
+  box-shadow: 4px 4px 0 0 #000 !important;
+}
+.btn-primary:hover:not(:disabled) {
+  transform: translate(-2px, -2px);
+  box-shadow: 6px 6px 0 0 #000 !important;
+}
+.btn-primary:active:not(:disabled) {
+  transform: translate(4px, 4px);
+  box-shadow: none !important;
+}
+
+:focus-visible {
+  outline: 4px solid #5ef0ff !important;
+  outline-offset: 2px;
+}
+
+.gsc-reactions-count,
+.gsc-comments-count { color: #ffe066; }
+
+@media (prefers-reduced-motion: reduce) {
+  .btn { transition: none; }
+}
