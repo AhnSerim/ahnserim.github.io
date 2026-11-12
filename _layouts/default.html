@@ -23,6 +23,20 @@
       }
     })(document.documentElement);
   </script>
+  {%- if page.layout == 'home' %}
+  <script>
+    // Home intro typing (assets/js/typing.js): hide the hero lines before
+    // first paint, once per tab session. Failsafe: show them on load if the
+    // typing script never ran.
+    (function (d) {
+      try {
+        if (sessionStorage.getItem('serim.booted') || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+        d.classList.add('fx-type');
+        addEventListener('load', function () { if (!window.__typing) d.classList.remove('fx-type'); });
+      } catch (e) {}
+    })(document.documentElement);
+  </script>
+  {%- endif %}
   <script src="{{ '/assets/js/nav.js' | relative_url }}?v={{ site.time | date: '%s' }}" defer></script>
   <script src="{{ '/assets/js/scroll-fx.js' | relative_url }}?v={{ site.time | date: '%s' }}" defer></script>
   <script src="{{ '/assets/js/space-eggs.js' | relative_url }}?v={{ site.time | date: '%s' }}" defer></script>

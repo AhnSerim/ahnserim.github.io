@@ -115,6 +115,7 @@ $stars-near: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' w
 .score-pop__total { font-size: var(--fs-sm); color: var(--pop-sub); }
 .score-pop--wish  { --pop-main: var(--c-star);   --pop-sub: var(--c-nebula); }
 .score-pop--alien { --pop-main: var(--c-plasma); --pop-sub: var(--c-star); }
+.score-pop--angry { --pop-main: var(--c-nebula); --pop-sub: var(--c-text); }
 
 @keyframes score-pop {
   0%   { opacity: 0; transform: translate(-50%, 0); }
@@ -171,7 +172,9 @@ $stars-near: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' w
 
 // ---- Peeking alien (Study page, _includes/study-alien.html) ---------------
 // Sits just below the bottom edge; .is-up slides it up in 4 steps so its
-// hands grip the edge. Caught (.is-caught): "!" pops, the sprite jumps.
+// hands grip the edge. Each poke (.is-caught): the bubble pops, the sprite
+// jumps. [data-mood] (set by space-eggs.js from the poke count) swaps the
+// face: startled → annoyed (squint) → furious (brows) → angry (pink, shaking).
 .alien {
   position: fixed;
   bottom: 0;
@@ -212,6 +215,33 @@ $stars-near: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' w
   .alien__sprite { animation: alien-startle .48s steps(4, end); }
 }
 
+
+// Moods
+.alien { --alien-skin: var(--c-plasma); }
+.alien__skin { fill: var(--alien-skin); }
+.alien__squint,
+.alien__rage { display: none; }
+.alien[data-mood="annoyed"] .alien__squint { display: inline; }
+.alien[data-mood="annoyed"],
+.alien[data-mood="furious"],
+.alien[data-mood="angry"] {
+  .alien__lids { animation: none; }               // no more cute blinking
+}
+.alien[data-mood="furious"],
+.alien[data-mood="angry"] {
+  .alien__rage  { display: inline; }
+  .alien__alert { color: var(--c-nebula); }
+}
+.alien[data-mood="angry"] {
+  --alien-skin: var(--c-nebula);                  // red-faced
+  .alien__alert  { opacity: 1; }
+  .alien__sprite { animation: alien-rage .24s steps(2, end) infinite; }
+}
+
+@keyframes alien-rage {
+  0%, 100% { transform: translateX(calc(var(--px) * -1)); }
+  50%      { transform: translateX(var(--px)); }
+}
 @keyframes alien-blink {
   0%, 40% { opacity: 0; }
   44%     { opacity: 1; }
@@ -227,5 +257,6 @@ $stars-near: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' w
 }
 @media (prefers-reduced-motion: reduce) {
   .alien { transition: none; }
-  .alien__lids, .alien.is-caught .alien__sprite { animation: none; }
+  .alien__lids, .alien.is-caught .alien__sprite,
+  .alien[data-mood="angry"] .alien__sprite { animation: none; }
 }

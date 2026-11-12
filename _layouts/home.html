@@ -4,7 +4,7 @@ layout: default
 {%- assign study_posts = site.posts | where: "section", "study" -%}
 {%- assign reading_posts = site.posts | where: "section", "reading" -%}
 <div class="container">
-  <section class="home-hero" aria-labelledby="home-title">
+  <section class="home-hero" aria-labelledby="home-title-wrap" data-typing>
     <p class="home-hero__boot" aria-hidden="true">&gt; BOOTING serim.space ...<span class="home-hero__cursor"></span></p>
     <div class="home-hero__content prose" id="home-title-wrap">
       {{ content }}
@@ -45,7 +45,8 @@ layout: default
       {%- endfor %}
     </div>
     {%- else %}
-    <p class="empty-state">아직 글이 없어요.</p>
+    <p class="empty-state">아직 글이 없습니다.</p>
     {%- endif %}
   </section>
 </div>
+<script src="{{ '/assets/js/typing.js' | relative_url }}?v={{ site.time | date: '%s' }}" defer></script>

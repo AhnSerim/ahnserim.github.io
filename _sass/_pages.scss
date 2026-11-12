@@ -21,7 +21,19 @@
   vertical-align: text-bottom;
   background: currentColor;
   animation: blink 1s steps(2, start) infinite;
+  &.is-typing { animation: none; }       // solid while typing, blinks at rest
 }
+.home-hero__ok { color: var(--c-star); }
+
+// Typing intro (assets/js/typing.js). `.fx-type` (set in <head>) hides the
+// lines until the script has wrapped them; untyped characters keep their
+// space but stay invisible, so nothing below shifts while typing.
+.fx-type {
+  .home-hero__boot,
+  .home-hero__content > h1,
+  .home-hero__content > p { visibility: hidden; }
+}
+.type-rest { visibility: hidden; }
 .home-hero__content {
   h1 {
     margin: 0 0 var(--sp-3);
@@ -195,6 +207,7 @@
 // Egg achievements (locked until their egg is found): frame + label in the
 // egg's accent, trophy in its own color.
 .hidden-sector__achievement--wish,
+.hidden-sector__achievement--angry,
 .hidden-sector__achievement--alien {
   --frame-line: var(--achv-accent);
   .hidden-sector__trophy { color: var(--achv-trophy); }
@@ -210,6 +223,7 @@
 }
 .hidden-sector__achievement--wish  { --achv-accent: var(--c-nebula); --achv-trophy: var(--c-star); }
 .hidden-sector__achievement--alien { --achv-accent: var(--c-plasma); --achv-trophy: var(--c-plasma); }
+.hidden-sector__achievement--angry { --achv-accent: var(--c-nebula); --achv-trophy: var(--c-nebula); }
 .hidden-sector__trophy { flex: 0 0 auto; image-rendering: pixelated; }
 .hidden-sector__label {
   margin: 0 0 var(--sp-2);

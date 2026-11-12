@@ -8,8 +8,86 @@
   &--reading { --accent: var(--c-nebula); }
 }
 
-// Content column stays readable on wide screens.
-.post__container { max-width: calc(var(--content-w) + var(--gutter) * 2); }
+// Quest-log sheet: the whole article sits in an opaque RPG window so the
+// twinkling stars / planet / ship never show through the text.
+//   outer  — pixel-frame, 4 corners rounded in 2 steps (like .post-card)
+//   inner  — .post__sheet-line: quiet 2px line (--c-space-600) 8px inside
+//            the outline, notched corners; the section --accent shows only
+//            as 12px corner brackets (bright full-length lines tire the eyes)
+//   plate  — .post__plate on the top edge: the post's tags, or "▶ QUEST LOG"
+// The text column inside stays --content-w wide.
+$sheet-pad: calc(var(--sp-5) + var(--px));   // padding + 4px outline
+.post__container {
+  max-width: calc(var(--content-w) + #{$sheet-pad} * 2 + var(--gutter) * 2);
+  padding-top: var(--sp-3);                  // room for the plate
+}
+.post__sheet {
+  @include pixel-frame(px-stair(8px, 8px, 8px, 8px), var(--c-space-900));
+  padding: $sheet-pad;
+}
+.post__sheet-line {
+  --bracket: 12px;                           // corner bracket arm length
+  position: absolute;
+  inset: calc(var(--px) * 3);                // 4px outline + 8px gap
+  border: 2px solid var(--c-space-600);      // quiet inner line
+  pointer-events: none;
+  @include pixel-corners(2px);
+
+  // Accent only on the four corner brackets (flat-color layers, no blend):
+  // each corner = one horizontal + one vertical 2px arm, drawn over the line.
+  &::before {
+    content: "";
+    position: absolute;
+    inset: -2px;
+    $c: linear-gradient(var(--accent), var(--accent));
+    background:
+      $c left   top    / var(--bracket) 2px no-repeat,
+      $c left   top    / 2px var(--bracket) no-repeat,
+      $c right  top    / var(--bracket) 2px no-repeat,
+      $c right  top    / 2px var(--bracket) no-repeat,
+      $c left   bottom / var(--bracket) 2px no-repeat,
+      $c left   bottom / 2px var(--bracket) no-repeat,
+      $c right  bottom / var(--bracket) 2px no-repeat,
+      $c right  bottom / 2px var(--bracket) no-repeat;
+  }
+}
+.post__plate {
+  position: absolute;
+  top: 0;
+  left: var(--sp-5);
+  z-index: 1;
+  margin: 0;
+  padding: var(--sp-1) var(--sp-2);
+  font-family: var(--font-pixel);
+  font-weight: 700;
+  font-size: var(--fs-xs);
+  line-height: 1;
+  color: var(--accent);
+  background: var(--c-space-900);
+  border: 2px solid var(--accent);
+  transform: translateY(-50%);
+  @include pixel-corners(2px);
+  &::before { content: "▶ "; }
+
+  // Tag variant (<ul>): the post's first tags as links, one line, clipped
+  // with an ellipsis if it would run past the window.
+  max-width: calc(100% - var(--sp-5) * 2);
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  list-style: none;
+  li { display: inline; }
+  li + li { margin-left: var(--sp-2); }
+  a {
+    color: inherit;
+    text-decoration: none;
+    &:hover { color: var(--c-text); }
+    &:focus-visible { outline-offset: 0; } // stays inside the plate's clip
+  }
+}
+
+// Section headings get the RPG selection cursor instead of "▸".
+.post__sheet .prose h2::before { content: "▶ "; color: var(--accent); }
 
 .post__header {
   margin-bottom: var(--sp-5);
@@ -117,7 +195,23 @@
 
 .post__back { margin-bottom: 0; }
 
+@include tablet {
+  .post__sheet { padding: calc(var(--sp-4) + var(--px)); }
+}
+
 @include mobile {
+  // Edge-to-edge window (more room for text); the double line and plate
+  // tighten up, and code blocks span the window's inside (just within the
+  // inner line) instead of the full screen.
+  .post__sheet {
+    margin-inline: calc(var(--gutter) * -1);
+    padding: var(--sp-5) var(--sp-4) var(--sp-4);
+    --frame-shadow: 0px;
+  }
+  .post__sheet-line { inset: var(--sp-2); }            // 4px outline + 4px gap
+  .post__plate { left: var(--sp-4); }
+  .post__sheet .prose div.highlighter-rouge,
+  .post__sheet .prose figure.highlight { margin-inline: calc(var(--px) * -3); }
   .post__title { text-shadow: 2px 2px 0 var(--c-shadow); }
   .post-pager { grid-template-columns: 1fr; }
   .post-pager__link--next { grid-column: auto; }

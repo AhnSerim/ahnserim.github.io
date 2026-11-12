@@ -7,7 +7,8 @@
 //     (localStorage), shown as an achievement in the hidden sector.
 //  3. Peeking alien (Study page only, `[data-alien]`) — a little alien
 //     peeks up from the bottom edge now and then; click/tap it before it
-//     ducks (or type "alien") to make contact. Counted like wishes.
+//     ducks (or type "alien") to make contact. Counted like wishes. Poke it
+//     10 times and it gets angry, shakes the screen and sulks for the tab.
 //
 // The background is fixed at z-index -1 with pointer-events: none, so it
 // never blocks the page. Clicks are hit-tested against the targets'
@@ -16,11 +17,14 @@
 (function () {
   var bg = document.querySelector('.space-bg');
   if (!bg) return;
+  // The hidden sector is the reward itself: every egg stays off there.
+  var warpTo = bg.getAttribute('data-egg');
+  if (warpTo && location.pathname.replace(/index\.html$/, '') === warpTo) return;
 
   var root = document.documentElement;
   var reduce = matchMedia('(prefers-reduced-motion: reduce)');
   var BLOCKERS = 'a, button, input, textarea, select, label, summary, iframe, pre, kbd, ' +
-                 '[role="button"], .post-card, .sector, .pixel-box, .site-header, .site-footer, .alien';
+                 '[role="button"], .post-card, .sector, .pixel-box, .post__sheet, .site-header, .site-footer, .alien';
   var WISH_KEY = 'serim.wishes';
   var ALIEN_KEY = 'serim.aliens';
   var alien = document.querySelector('[data-alien]');
@@ -28,10 +32,9 @@
   // ---- Targets -------------------------------------------------------------
   var ship = bg.querySelector('.space-bg__ship');
   var planet = bg.querySelector('.space-bg__planet');
-  var warpTo = bg.getAttribute('data-egg');
 
   var eggs = [];
-  if (ship && warpTo && location.pathname !== warpTo) eggs.push({ name: 'ship', el: ship, slack: 6, run: warp });
+  if (ship && warpTo) eggs.push({ name: 'ship', el: ship, slack: 6, run: warp });
   if (planet) eggs.push({ name: 'planet', el: planet, slack: 0, run: meteorShower });
   if (!eggs.length) return;
 
@@ -84,7 +87,7 @@
     };
   }
   var codes = [sequence(['w', 'i', 's', 'h'], meteorShower)];
-  if (eggs[0].name === 'ship') {
+  if (ship && warpTo) {
     codes.push(sequence(['ArrowUp', 'ArrowUp', 'ArrowDown', 'ArrowDown', 'ArrowLeft',
                          'ArrowRight', 'ArrowLeft', 'ArrowRight', 'b', 'a'], warp));
   }
@@ -224,24 +227,52 @@
       score: '+1 WISH',
       total: wishes ? '★ × ' + wishes : ''
     });
-    announce('유성우가 떨어져요. 소원 하나 추가' + (wishes ? ', 지금까지 ' + wishes + '개.' : '.'));
+    announce('유성우가 떨어집니다. 소원이 하나 늘었습니다.' + (wishes ? ' 지금까지 ' + wishes + '개입니다.' : ''));
     setTimeout(function () { showering = false; }, Math.max(longest, 1600));
   }
 
   // ==========================================================================
   // 3. Peeking alien (Study page)
   // ==========================================================================
-  // States: hidden → up (peeking, catchable) → hidden, or up → caught → hidden.
+  // States: hidden → up (peeking, pokeable) → hidden; up → angry → hidden.
+  // Every click while it's up is a poke: it startles and stays a bit
+  // longer, so you can keep poking. The first poke of each peek counts as a
+  // contact. Its mood worsens with the pokes of this page visit, and at
+  // ANGRY_AT it blows up, shakes the screen and sulks: it won't show up
+  // again in this tab (sessionStorage).
   var alienState = 'hidden';
   var alienTimer = 0;
   var PEEK_MS = 2600;                    // how long it stays up
+  var POKE_MS = 1400;                    // extra stay after each poke
   var DUCK_MS = 480;                     // CSS slide time (+ a frame)
+  var ANGRY_AT = 10;
+  var ANGRY_KEY = 'serim.aliens.angry';  // times it was made angry
+  var SULK_KEY = 'serim.alien.sulk';     // sessionStorage: sulking in this tab
+  var pokes = 0;                         // pokes during this page visit
+  var contacted = false;                 // already counted for this peek
+  // mood by poke count → shown by CSS ([data-mood]) and the bubble text
+  var MOODS = [
+    { at: 1, mood: 'startled', alert: '!' },
+    { at: 5, mood: 'annoyed',  alert: '?!' },
+    { at: 8, mood: 'furious',  alert: '!!' },
+    { at: ANGRY_AT, mood: 'angry', alert: '#@!' }
+  ];
+  var alertEl = alien && alien.querySelector('.alien__alert');
 
   function later(min, max) { return min + Math.round(Math.random() * (max - min)); }
   function schedulePeek(ms) { clearTimeout(alienTimer); alienTimer = setTimeout(peek, ms); }
+  function sulking() { try { return sessionStorage.getItem(SULK_KEY) === '1'; } catch (e) { return false; } }
+
+  function setMood() {
+    var m = null;
+    MOODS.forEach(function (s) { if (pokes >= s.at) m = s; });
+    if (!m) { alien.removeAttribute('data-mood'); return; }
+    alien.setAttribute('data-mood', m.mood);
+    if (alertEl) alertEl.textContent = m.alert;
+  }
 
   function peek() {
-    if (alienState !== 'hidden') return;
+    if (alienState !== 'hidden' || sulking()) return;
     if (document.hidden) { schedulePeek(3000); return; } // wait for the tab
     // somewhere along the content column, on the 4px grid
     var col = document.querySelector('.site-main .container');
@@ -250,6 +281,8 @@
     alien.style.left = snap(cr.left + Math.random() * Math.max(cr.right - cr.left - w, 0)) + 'px';
     alien.hidden = false;
     alienState = 'up';
+    contacted = false;
+    setMood(); // still grumpy from earlier pokes
     // two frames: let it render below the edge first so the slide-up runs
     requestAnimationFrame(function () {
       requestAnimationFrame(function () { alien.classList.add('is-up'); });
@@ -257,46 +290,77 @@
     alienTimer = setTimeout(function () { duck(later(10000, 18000)); }, PEEK_MS);
   }
 
+  // Slide back down; `next` = ms until the next peek (null: never).
   function duck(next) {
     clearTimeout(alienTimer);
     alien.classList.remove('is-up', 'is-caught');
     setTimeout(function () {
       alien.hidden = true;
       alienState = 'hidden';
-      schedulePeek(next);
+      if (next != null) schedulePeek(next);
     }, DUCK_MS);
   }
 
-  function catchAlien() {
+  function poke() {
     if (alienState !== 'up') return;
-    alienState = 'caught';
     clearTimeout(alienTimer);
+    pokes++;
+    setMood();
+    // restart the startle jump on every poke
+    alien.classList.remove('is-caught');
+    void alien.offsetWidth;
     alien.classList.add('is-caught');
-    var n = bump(ALIEN_KEY);
-    var r = alien.getBoundingClientRect();
-    scorePop({
-      kind: 'alien',
-      x: r.left + r.width / 2,
-      y: r.top - 40,   // above the "!"
-      score: '+1 CONTACT',
-      total: n ? 'ALIEN × ' + n : ''
-    });
-    announce('외계인과 접촉했어요' + (n ? '. 지금까지 ' + n + '번째 접촉.' : '.'));
-    // startled for a moment, then dives back down; returns much later
-    setTimeout(function () { duck(later(20000, 30000)); }, 900);
+
+    if (!contacted) {
+      contacted = true;
+      var n = bump(ALIEN_KEY);
+      popOverAlien('alien', '+1 CONTACT', n ? 'ALIEN × ' + n : '');
+      announce('외계인과 접촉했습니다.' + (n ? ' 지금까지 ' + n + '번째 접촉입니다.' : ''));
+    }
+    if (pokes >= ANGRY_AT) { getAngry(); return; }
+    alienTimer = setTimeout(function () { duck(later(10000, 18000)); }, POKE_MS);
   }
 
-  // Keyboard path ("alien"): call it up now and make contact.
+  function getAngry() {
+    alienState = 'angry';
+    bump(ANGRY_KEY);
+    try { sessionStorage.setItem(SULK_KEY, '1'); } catch (e) {}
+    popOverAlien('angry', 'ANGRY!!', "DON'T POKE ME");
+    announce('외계인이 화가 났습니다! 한동안 나타나지 않을 것입니다.');
+    // it stomps: the whole page shakes for a moment
+    var main = document.querySelector('.site-main');
+    if (main && main.animate && !reduce.matches) {
+      main.animate(
+        [{ translate: '0 0' }, { translate: '-8px 0' }, { translate: '8px 4px' },
+         { translate: '-8px -4px' }, { translate: '8px 0' }, { translate: '0 0' }],
+        { duration: 480, easing: 'steps(6, end)' }
+      );
+    }
+    // fumes for a bit, then storms off for good (this tab)
+    setTimeout(function () { duck(null); }, 1800);
+  }
+
+  function popOverAlien(kind, score, total) {
+    var r = alien.getBoundingClientRect();
+    scorePop({ kind: kind, x: r.left + r.width / 2, y: r.top - 40, score: score, total: total }); // above the bubble
+  }
+
+  // Keyboard path ("alien"): call it up now and poke it once.
   function summonAlien() {
-    if (alienState === 'caught') return;
+    if (sulking()) {
+      scorePop({ kind: 'angry', x: innerWidth / 2, y: innerHeight - 120, score: '...', total: 'STILL ANGRY' });
+      announce('외계인은 아직 화가 나 있습니다.');
+      return;
+    }
     if (alienState === 'hidden') { clearTimeout(alienTimer); peek(); }
-    setTimeout(catchAlien, 700);
+    setTimeout(poke, 700);
   }
 
   if (alien) {
-    alien.addEventListener('click', catchAlien);
-    schedulePeek(later(5000, 8000));
+    alien.addEventListener('click', poke);
+    if (!sulking()) schedulePeek(later(5000, 8000));
   }
+
 
   // ==========================================================================
   // Shared helpers

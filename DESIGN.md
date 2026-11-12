@@ -180,21 +180,21 @@ UI는 레트로 게임(부팅 화면, SECTOR, GAME OVER, ◀ PREV / NEXT ▶)의
 | 사이트 헤더 | `_includes/header.html`, `_layout.scss` | sticky, 반투명 남색 + blur, 하단 4px 테두리. 픽셀 SVG 로고 + `serim.space` (점은 노랑) |
 | 네비게이션 | `_includes/nav.html`, `_data/navigation.yml`, `_layout.scss` | **스테이지 선택 키캡** — 아이콘 없이 **Galmuri11 Bold** 라벨만, 가로·세로 가운데 정렬(`text-box: trim-both cap alphabetic`으로 폰트 위아래 여백을 잘라 시각적 중앙). 평소엔 테두리 없이 평평, hover/focus 시 남색 키캡이 `--accent` 테두리로 떠오름(-2px), 현재 페이지는 액센트 면 + 베벨의 켜진 키캡(`aria-current`: 해당 페이지 `page`, 섹션 하위 글 `true`). Study/Reading은 섹션색. 태블릿은 좌우 여백 축소, 모바일은 햄버거 → `SELECT STAGE` 제목 + 2열 키캡 그리드 드롭다운(메뉴 선택·Esc·바깥 클릭·포커스 이탈 시 닫힘). 평소 모양은 `--nav-rest-line/bg/shadow`로만 바꿈(상태 스타일보다 우선순위가 높아지지 않게) |
 | 우주 배경 | `_includes/space-bg.html`, `_space.scss` | 고정 배경. 별 타일 2레이어(원경 흐릿, 근경 twinkle), 픽셀 행성(우상단), 우주선(좌→우 38초 비행). 모두 `aria-hidden` |
-| 홈 히어로 | `_layouts/home.html` | `> BOOTING serim.space ...` 시안 부팅 문구 + 깜빡이는 커서, 큰 노랑 h1 |
+| 홈 히어로 | `_layouts/home.html`, `assets/js/typing.js` | **터미널 타이핑 인트로** — 시안 `> BOOTING serim.space ...`(28ms/자) → 노란 ` OK` → 큰 노랑 h1 `Hello World!`(90ms/자) → 부제(60ms/자)를 차례로 타이핑, 블록 커서가 줄을 따라 이동(타이핑 중엔 고정, 끝나면 마지막 줄 끝에서 깜빡임). 글자마다 속도 ±30% 흔들림. 안 친 글자는 투명하게 자리만 차지(레이아웃 흔들림 없음), 스크린리더는 숨은 전체 문장을 읽음. 클릭·키 입력 시 즉시 완성. 탭 세션당 첫 방문 1회(sessionStorage `serim.booted`), JS 없음·모션 감소·재방문은 바로 표시. `<head>`의 인라인 스크립트가 `.fx-type`으로 첫 페인트 전에 숨김(실패 시 load에서 해제) |
 | 섹터 카드 | `.sector` | **게임 카트리지** — 우상단 24px 계단 컷, `SECTOR 01 / 02` kicker, 섹션색 윗줄이 있는 라벨 스티커(제목·설명), 하단 글 수 배지(`N편 ▶`) + 그립 줄무늬. hover: 위로 뽑히며 테두리 섹션색, active: 꽂히듯 눌림 |
 | 페이지 히어로 | `.page-hero` | kicker(픽셀 캐럿 + 대문자) → 큰 제목 → 설명 → 액센트 배경 카운트 배지, 하단 점선 |
 | 포스트 카드 | `_includes/post-card.html` | **RPG 대화창** — 네 모서리 8px(2계단) 둥근 픽셀 창. hover/focus 시 테두리 섹션색 + 왼쪽 레인에 깜빡이는 `▶` 선택 커서(`.post-card__cursor`). 좌측 날짜 열(`MM.DD` / `YYYY`, 점선 구분) + 본문. 카드 전체 클릭(제목 링크 `::after`). Reading은 BOOK 라벨 + 별점 |
-| 포스트 상세 | `_layouts/post.html`, `_post.scss` | breadcrumb `/` 구분, 날짜·N분 읽기·섹션 칩, Reading은 `BOOK DATA` 박스, 하단 태그 · `◀ PREV / NEXT ▶` 페이저(**화살표 키** — 진행 방향 쪽 모서리를 16px 계단으로 깎은 블록, hover 시 그 방향으로 4px 이동) · 목록으로 버튼 |
+| 포스트 상세 | `_layouts/post.html`, `_post.scss` | **퀘스트 로그 창(`.post__sheet`)** — 글 전체(헤더·본문·푸터)를 불투명한 `--c-space-900` RPG 창 위에 올려 배경이 글자 뒤로 비치지 않게 함. 바깥은 `pixel-frame` 네 모서리 8px(2계단), 안쪽 8px 들어간 곳에 차분한 `--c-space-600` 2px 선(`.post__sheet-line`, 2px 노치 모서리) = 이중 테두리, 섹션색은 네 모서리의 12px ㄱ자 브래킷에만(전체 길이의 밝은 선은 눈이 피로해서 쓰지 않음), 윗변에 걸친 명패(`.post__plate`): 글의 태그 최대 3개를 `▶ #tag #tag` 링크로(Tags 페이지 해당 앵커, 한 줄 넘치면 말줄임), 태그가 없으면 `▶ QUEST LOG`, 본문 h2 앞 `▸` 대신 섹션색 `▶` 커서. 안쪽 여백 44px / 태블릿 28px, 본문 폭은 그대로 720px. 모바일은 화면 끝까지 붙고(그림자 없음, 선은 4px 안쪽) 코드블록은 화면 끝 대신 창 안쪽 폭까지. 창 위 클릭은 배경 이스터에그로 넘어가지 않음. breadcrumb `/` 구분, 날짜·N분 읽기·섹션 칩, Reading은 `BOOK DATA` 박스, 하단 태그 · `◀ PREV / NEXT ▶` 페이저(**화살표 키** — 진행 방향 쪽 모서리를 16px 계단으로 깎은 블록, hover 시 그 방향으로 4px 이동) · 목록으로 버튼 |
 | 본문 (prose) | `_prose.scss` | h2 앞 `▸ ` + 하단 실선, h3 시안, ul 마커 `■` 노랑, 인용문 좌측 8px 핑크 바, 이미지 테두리+그림자, 코드블록 상단에 언어 라벨 바(`C`, `C++`, `ASM`…) |
 | 빈 상태 | `.empty-state` | `NO SIGNAL…` 깜빡임 |
 | 방명록 | `guestbook.html`, `_includes/giscus.html`, `.guestbook` | kicker `SIGNAL STATION · 방명록`, `HOW TO TRANSMIT` 안내 박스 + giscus(GitHub Discussions, Announcements 카테고리의 `guestbook` 글타래) 위젯. 설정은 `_config.yml`의 `giscus:`. 미설정 시 `SIGNAL OFFLINE` 빈 상태 |
 | giscus 테마 | `assets/css/giscus.css` | iframe 내부라 사이트 토큰을 못 씀 → 토큰 값을 **직접 복사**. 토큰 변경 시 이 파일도 함께 수정. 각진 모서리, 4px 테두리 + 하드 그림자, 픽셀 폰트 버튼 |
 | 읽기 진행 게이지 | `.scroll-progress` (헤더, 포스트에서만) | 헤더 하단 테두리 위에 12px 채움 + 4px 간격의 세그먼트 바. 16px 단위로만 차오름. 섹션색 |
 | 404 | `404.html` | 큰 핑크 `404` + `GAME OVER` + `▶ CONTINUE` 버튼 |
-| 숨겨진 구역 (이스터에그 1) | `hidden-sector.html` (`/hidden-sector/`), `.hidden-sector` | 배경 우주선을 클릭(또는 코나미 코드)하면 도착. `SECTOR 00 · CLASSIFIED` → `BONUS STAGE`, 착륙장 위에 떠 있는 큰 우주선, `ACHIEVEMENT UNLOCKED` 패널(방문 횟수, localStorage), 유성우 업적(소원 전엔 `LOCKED` 회색 실루엣), `PILOT'S SECRET LOG`. 어디에도 링크하지 않고 `noindex`·`sitemap: false` |
+| 숨겨진 구역 (이스터에그 1) | `hidden-sector.html` (`/hidden-sector/`), `.hidden-sector` | 배경 우주선을 클릭(또는 코나미 코드)하면 도착. `SECTOR 00 · CLASSIFIED` → `BONUS STAGE`, 착륙장 위에 떠 있는 큰 우주선, `ACHIEVEMENT UNLOCKED` 패널(방문 횟수, localStorage), 유성우 업적(소원 전엔 `LOCKED` 회색 실루엣), `PILOT'S SECRET LOG`. 이 페이지에서는 **모든 이스터에그(우주선·유성우·키 코드)가 꺼짐**(`space-eggs.js` 첫머리에서 종료). 어디에도 링크하지 않고 `noindex`·`sitemap: false` |
 | 유성우 (이스터에그 2) | `assets/js/space-eggs.js`, `_space.scss` | 배경 행성을 클릭·탭(모바일 포함)하거나 `WISH` 입력 → 행성이 4px 흔들리고 픽셀 유성 6개가 우상→좌하로 `steps(12)` 낙하(시작점은 위쪽·오른쪽 변을 잇는 L자를 6칸으로 나눠 칸마다 하나 → 궤적 간격 균등, 순서는 섞음), 행성 위에 오락실 점수처럼 `+1 WISH` / `★ × N` 점수 팝업(`.score-pop--wish`, 노랑·핑크 픽셀 Bold + 하드 그림자)이 튀어 올랐다 사라짐. 스크린리더는 숨은 `role="status"`로 안내. 소원 수는 localStorage `serim.wishes` → 숨겨진 구역 업적 해금. 모션 감소 시 유성 없이 팝업만 제자리에 잠깐 표시 |
-| 엿보는 외계인 (이스터에그 3) | `_includes/study-alien.html` (Study 목록 페이지만, `section.html`), `space-eggs.js`, `_space.scss` | 시안(Study 색) 12×10 픽셀 외계인(더듬이·큰 눈·가장자리를 붙잡은 손, 8px/픽셀, 모바일 4px)이 5–8초 뒤 콘텐츠 폭 안 무작위 위치에서 화면 아래 가장자리로 빼꼼 올라와 2.6초간 눈을 깜빡이다 숨음(10–18초마다 반복, 탭이 숨겨지면 대기). 숨기 전 클릭·탭하거나 `ALIEN` 입력 → 머리 위 노란 `!` + 깜짝 점프, `+1 CONTACT` / `ALIEN × N` 점수 팝업(`.score-pop--alien`, 시안·노랑). 접촉 수는 localStorage `serim.aliens` → 숨겨진 구역 업적. 모션 감소 시 미끄러짐·점프 없이 나타났다 사라짐 |
-| 숨겨진 구역 업적 | `hidden-sector.html` | 이스터에그별 업적 칸은 `data-unlock`(localStorage 키) + `data-title`/`data-desc`(`{n}` = 횟수)로 선언 → 카운터 > 0이면 해금. 색은 `--achv-accent`/`--achv-trophy` modifier(`--wish` 핑크, `--alien` 시안) |
+| 엿보는 외계인 (이스터에그 3) | `_includes/study-alien.html` (Study 목록 페이지만, `section.html`), `space-eggs.js`, `_space.scss` | 시안(Study 색) 12×10 픽셀 외계인(더듬이·큰 눈·가장자리를 붙잡은 손, 8px/픽셀, 모바일 4px)이 5–8초 뒤 콘텐츠 폭 안 무작위 위치에서 화면 아래 가장자리로 빼꼼 올라와 2.6초간 눈을 깜빡이다 숨음(10–18초마다 반복, 탭이 숨겨지면 대기). 숨기 전 클릭·탭(= 찌르기)하거나 `ALIEN` 입력 → 머리 위 말풍선 + 깜짝 점프, 찌를 때마다 1.4초 더 머묾. 한 번 등장에 첫 찌르기만 `+1 CONTACT` / `ALIEN × N` 점수 팝업(`.score-pop--alien`, 시안·노랑), localStorage `serim.aliens`. **기분(`data-mood`, 이번 방문의 찌른 횟수)**: 1–4 `startled` `!` → 5–7 `annoyed` `?!`(눈 가늘게) → 8–9 `furious` `!!`(V자 눈썹·찡그린 입, 핑크 말풍선) → 10 `angry` `#@!`(몸이 핑크로, 부들부들 떨림) + 페이지 흔들림 + `ANGRY!!` / `DON'T POKE ME` 팝업(`.score-pop--angry`) → 퇴장 후 이 탭에선 다시 안 나옴(sessionStorage `serim.alien.sulk`, `ALIEN` 입력 시 `STILL ANGRY`). 화난 횟수 localStorage `serim.aliens.angry` → "외교 실패" 업적. 얼굴 레이어는 SVG `<g>`(`__lids`/`__squint`/`__rage`), 피부색은 `.alien__skin` + `--alien-skin`. 모션 감소 시 미끄러짐·점프 없이 나타났다 사라짐 |
+| 숨겨진 구역 업적 | `hidden-sector.html` | 이스터에그별 업적 칸은 `data-unlock`(localStorage 키) + `data-title`/`data-desc`(`{n}` = 횟수)로 선언 → 카운터 > 0이면 해금. 색은 `--achv-accent`/`--achv-trophy` modifier(`--wish` 핑크, `--alien` 시안, `--angry` 핑크) |
 | 푸터 | `_includes/footer.html` | 픽셀 캐럿 + ©, GitHub · `맨 위로 ▲` |
 
 ---
@@ -203,7 +203,7 @@ UI는 레트로 게임(부팅 화면, SECTOR, GAME OVER, ◀ PREV / NEXT ▶)의
 
 - **UI 라벨은 게임/우주 용어 + 영문 대문자**: `SECTOR 01`, `BOOK DATA`, `NO SIGNAL…`, `GAME OVER`, `CONTINUE`, `BOOTING`.
 - **방향/진행은 기호**: `◀` `▶` `▲` `▸` `■`.
-- **설명 문장은 한국어, 친근한 존댓말**: "아직 이 구역에 도착한 글이 없어요. 곧 착륙할 예정입니다."
+- **설명 문장은 한국어, 합쇼체(~습니다 / ~입니다)**: "아직 이 구역에 도착한 글이 없습니다. 곧 착륙할 예정입니다." 권유는 "~해 보십시오", "~해 주십시오". 인사말 "안녕하세요"는 예외. 포스트 본문은 글쓴이 문체를 따르므로 이 규칙 대상이 아님.
 - 우주 은유(구역·착륙·우주 저편·신호)는 가볍게, 과하지 않게.
 
 ---
@@ -221,8 +221,11 @@ UI는 레트로 게임(부팅 화면, SECTOR, GAME OVER, ◀ PREV / NEXT ▶)의
 | `score-pop` | 이스터에그 점수 팝업 (유성우·외계인) | 1.6s `steps(8)` — 40px 튀어 오름 → 24px로 내려앉음 → 64px까지 떠오르며 사라짐 |
 | 외계인 등장/퇴장 | 엿보는 외계인 | `transform` 400ms `steps(4)` 트랜지션 (화면 아래 → 가장자리) |
 | `alien-blink` | 외계인 눈 | 2.6s `steps(1)` 무한 |
-| `alien-startle` | 잡힌 외계인 | .48s `steps(4)`, 24px 점프 |
+| `alien-startle` | 찔린 외계인 (찌를 때마다 재시작) | .48s `steps(4)`, 24px 점프 |
+| `alien-rage` | 화난 외계인 | .24s `steps(2)` 무한, 좌우 4px |
+| 페이지 흔들림 | 외계인이 화났을 때 `.site-main` | WAAPI `translate` 480ms `steps(6)`, 8px |
 | `blink` | 커서, NO SIGNAL | 1–1.2s `steps(2, start)` |
+| 타이핑 | 홈 히어로 | JS `setTimeout` 글자 단위(28 / 90 / 60ms ±30%), 줄 사이 300–450ms 쉼 |
 
 | `pixel-rise` | 스크롤로 화면에 들어오는 요소 | `--dur-reveal` 400ms, `--ease-reveal` `steps(4, end)` — 아래에서 16px을 4px씩 끊어 올라오며 나타남 |
 
@@ -284,6 +287,7 @@ assets/css/main.scss  위 파일 import 순서 정의
 assets/css/giscus.css giscus iframe용 테마 (Sass 미처리, 토큰 값 수동 복사)
 assets/js/nav.js      모바일 햄버거 메뉴
 assets/js/scroll-fx.js 스크롤 효과
+assets/js/typing.js    홈 히어로 타이핑 인트로
 assets/js/space-eggs.js 이스터에그 (우주선 클릭 / 코나미 코드 → /hidden-sector/, 행성 클릭 / WISH → 유성우, Study 외계인 클릭 / ALIEN → 접촉)
 _includes/study-alien.html 엿보는 외계인 스프라이트 (Study 목록에서만 include)
 ```
@@ -301,3 +305,8 @@ _includes/study-alien.html 엿보는 외계인 스프라이트 (Study 목록에�
 | 2026-11-12 | 박스 형태 리팩터: `px-stair()`·`pixel-frame` 도입. 섹터=카트리지, 포스트 카드=RPG 대화창(▶ 커서), 버튼=아케이드 키캡(베벨 토큰 `--c-bevel-*` 추가), 페이저=화살표 키, `.pixel-box`=HUD 패널, 칩=픽셀 알약. 배경 우주선 이스터에그 + `/hidden-sector/` 추가 |
 | 2026-11-12 | 네비 리팩터: 스테이지 선택 키캡(Galmuri11 Bold 라벨, 켜진 키캡 = 현재 페이지, 모바일 2열 `SELECT STAGE` 메뉴). 이스터에그 2 — 행성 클릭/`WISH` 유성우 + 숨겨진 구역 업적. `stowaway.js` → `space-eggs.js`. 유성우는 유성 6개 + 행성 위 `+1 WISH` 점수 팝업(하단 토스트 제거) |
 | 2026-11-12 | 이스터에그 3 — Study 페이지의 엿보는 외계인(`study-alien.html`, `ALIEN`) + 숨겨진 구역 업적. 점수 팝업을 `.score-pop--{wish,alien}`로 일반화, 업적 해금을 `data-unlock` 선언식으로 정리 |
+| 2026-11-12 | 외계인 기분 단계 추가: 찌를 때마다 머묾 연장, 5·8·10번째에 표정 변화, 10번이면 화내며 화면 흔들고 탭 세션 동안 삐짐. "외교 실패" 업적, `.score-pop--angry` |
+| 2026-11-12 | 포스트 가독성: 글 전체를 불투명 RPG 퀘스트 로그 창 `.post__sheet`(이중 테두리 + `▶ QUEST LOG` 명패) 위에 올림 |
+| 2026-11-12 | 포스트 명패에 글 태그(최대 3개, 링크) 표시. 숨겨진 구역에서는 모든 이스터에그 비활성. UI 문구를 합쇼체(~습니다/~입니다)로 통일, 카피 보이스 규칙 갱신 |
+| 2026-11-12 | 퀘스트 로그 창 안쪽 선을 섹션색 → `--c-space-600`으로 낮추고, 섹션색은 모서리 12px 브래킷에만 사용(눈부심 완화) |
+| 2026-11-12 | 홈 히어로에 터미널 타이핑 인트로 추가(`typing.js`, `.fx-type`, 세션당 1회) |
