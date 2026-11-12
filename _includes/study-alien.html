@@ -1,0 +1,27 @@
+{%- comment -%}
+  Easter egg 3 — the peeking alien (Study page only, see section.html).
+  Starts hidden; assets/js/space-eggs.js slides it up from the bottom edge
+  now and then. Click/tap it (or type "alien") to make contact.
+  12×10 pixel sprite, drawn at 8px per pixel. Decorative → aria-hidden.
+{%- endcomment -%}
+<div class="alien" data-alien hidden aria-hidden="true">
+  <span class="alien__alert">!</span>
+  <svg class="alien__sprite" viewBox="0 0 12 10" width="96" height="80" shape-rendering="crispEdges">
+    <!-- antennae -->
+    <rect x="2" y="0" width="1" height="1" fill="#ffe066"/><rect x="9" y="0" width="1" height="1" fill="#ffe066"/>
+    <rect x="3" y="1" width="1" height="1" fill="#5ef0ff"/><rect x="8" y="1" width="1" height="1" fill="#5ef0ff"/>
+    <!-- head -->
+    <rect x="4" y="2" width="4" height="1" fill="#5ef0ff"/>
+    <rect x="2" y="3" width="8" height="1" fill="#5ef0ff"/>
+    <rect x="1" y="4" width="10" height="5" fill="#5ef0ff"/>
+    <!-- eyes (+ highlight) and the lids that blink over them -->
+    <rect x="3" y="4" width="2" height="2" fill="#070a1c"/><rect x="7" y="4" width="2" height="2" fill="#070a1c"/>
+    <rect x="3" y="4" width="1" height="1" fill="#e8ebff"/><rect x="7" y="4" width="1" height="1" fill="#e8ebff"/>
+    <g class="alien__lids" fill="#5ef0ff"><rect x="3" y="4" width="2" height="2"/><rect x="7" y="4" width="2" height="2"/></g>
+    <!-- mouth -->
+    <rect x="5" y="7" width="2" height="1" fill="#070a1c"/>
+    <!-- hands gripping the screen edge -->
+    <rect x="0" y="8" width="2" height="2" fill="#a9b0d6"/><rect x="10" y="8" width="2" height="2" fill="#a9b0d6"/>
+    <rect x="2" y="9" width="8" height="1" fill="#5ef0ff"/>
+  </svg>
+</div>

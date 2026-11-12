@@ -49,39 +49,80 @@ body {
 .site-logo__icon { image-rendering: pixelated; }
 .site-logo__dot { color: var(--c-star); }
 
-// ---- Navigation -----------------------------------------------------------
+// ---- Navigation: "stage select" keycaps ------------------------------------
+// Each item is a small pixel-frame keycap with a bold pixel label. Resting
+// items are flat (no frame); hover/focus lifts a dark keycap outlined in the
+// item's accent; the current page is a lit keycap (accent face + bevel).
+// Accent per item via --accent (DESIGN.md §2 섹션별 액센트 규칙).
+.site-nav__title { display: none; }   // heading of the mobile dropdown only
+
 .site-nav__list {
   display: flex;
-  gap: var(--sp-2);
+  gap: var(--sp-1);
   margin: 0;
   padding: 0;
   list-style: none;
 }
 
 .site-nav__link {
+  // Resting look comes from --nav-rest-* so contexts (the mobile menu) can
+  // restyle it without out-ranking the hover / current states below.
+  @include pixel-frame(px-stair(4px, 4px, 4px, 4px),
+                       var(--nav-rest-bg, transparent), var(--nav-rest-line, transparent));
+  --accent: var(--c-star);
+  --frame-shadow: var(--nav-rest-shadow, 0px);
   display: flex;
   align-items: center;
-  min-height: 44px;
+  justify-content: center;
+  min-height: 44px;            // touch target
   padding: var(--sp-1) var(--sp-3);
   font-family: var(--font-pixel);
   font-size: var(--fs-sm);
+  font-weight: 700;            // Galmuri11 ships a real pixel Bold
+  line-height: 1;
   color: var(--c-text);
   text-decoration: none;
-  border: var(--px) solid transparent;
+  white-space: nowrap;
+  transition: transform var(--dur-fast) var(--ease-step),
+              filter var(--dur-fast) var(--ease-step);
 
-  &:hover {
-    color: var(--c-star);
-    border-color: var(--c-border);
+  &--study   { --accent: var(--c-plasma); }
+  &--reading { --accent: var(--c-nebula); }
+
+  // Hover / keyboard focus: a dark keycap pops up, outlined in the accent.
+  &:hover,
+  &:focus-visible {
+    color: var(--accent);
+    --frame-line: var(--accent);
+    --frame-bg: var(--c-space-800);
+    --frame-shadow: var(--px);
+    transform: translate(-2px, -2px);
   }
 
+  &:active {
+    transform: translate(2px, 2px);
+    --frame-shadow: 0px;
+  }
+
+  // Current page: lit keycap (accent face + keycap bevel).
   &[aria-current] {
     color: var(--c-space-900);
-    background: var(--c-star);
-    border-color: var(--c-space-900);
-    box-shadow: var(--pixel-shadow);
+    --frame-line: var(--c-space-900);
+    --frame-bg: var(--accent);
+    --frame-shadow: var(--px);
+    &::after {
+      box-shadow: inset 0 var(--px) 0 0 var(--c-bevel-light),
+                  inset 0 calc(var(--px) * -1) 0 0 var(--c-bevel-dark);
+    }
+    &:hover,
+    &:focus-visible { color: var(--c-space-900); --frame-line: var(--c-space-900); }
   }
-  &--study[aria-current]   { background: var(--c-plasma); }
-  &--reading[aria-current] { background: var(--c-nebula); }
+}
+.site-nav__label {
+  display: block;
+  // Trim the font's uneven ascender/descender space so the label sits in the
+  // optical center of the keycap (ignored by browsers without text-box).
+  text-box: trim-both cap alphabetic;
 }
 
 // Hamburger button (only shown on mobile, only after nav.js runs).
@@ -134,7 +175,6 @@ body {
 // ---- Tablet (768–1023px) --------------------------------------------------
 @include tablet {
   .site-main { padding-block: var(--sp-5); }
-  .site-nav__list { gap: var(--sp-1); }
   .site-nav__link { padding-inline: var(--sp-2); }
 }
 
@@ -159,10 +199,31 @@ body {
       display: none;
     }
     .site-nav.is-open { display: block; }
+
+    // Dropdown = pause-menu panel: a heading + 2-column grid of keycaps.
+    .site-nav__title {
+      display: block;
+      margin: 0 0 var(--sp-3);
+      font-family: var(--font-pixel);
+      font-size: var(--fs-xs);
+      color: var(--c-text-dim);
+      &::before { content: "▸ "; color: var(--c-star); }
+    }
+    .site-nav__list {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: var(--sp-2);
+    }
+    .site-nav__list > li {
+      // resting keycaps are visible here (dark face + border)
+      --nav-rest-line: var(--c-border);
+      --nav-rest-bg: var(--c-space-900);
+      --nav-rest-shadow: var(--px);
+    }
+    .site-nav__link { min-height: 48px; }
   }
 
   .site-header__inner { position: relative; }
-  .site-nav__list { flex-direction: column; gap: var(--sp-2); }
   .site-nav__link { font-size: var(--fs-base); padding-inline: var(--sp-3); }
 
   // Without JS: nav simply wraps below the logo.

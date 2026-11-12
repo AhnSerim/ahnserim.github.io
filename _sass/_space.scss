@@ -62,16 +62,67 @@ $stars-near: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' w
 }
 @keyframes flicker { 50% { opacity: .3; } }
 
-// ---- Easter egg (assets/js/stowaway.js) -----------------------------------
-// Hovering the ship over empty space: it stops, glows, and the cursor hints.
-.egg-hover body { cursor: pointer; }
-.egg-hover .space-bg__ship {
-  animation-play-state: paused;
-  // 2px hard yellow outline, built from four offset (blur 0) shadows
-  filter: drop-shadow(2px 0 0 var(--c-star)) drop-shadow(-2px 0 0 var(--c-star))
-          drop-shadow(0 2px 0 var(--c-star)) drop-shadow(0 -2px 0 var(--c-star));
+// ---- Easter eggs (assets/js/space-eggs.js) --------------------------------
+// Hovering a target over empty space: it glows and the cursor hints.
+// The outline is 2px, built from four offset (blur 0) hard shadows.
+@mixin egg-outline($c) {
+  filter: drop-shadow(2px 0 0 $c) drop-shadow(-2px 0 0 $c)
+          drop-shadow(0 2px 0 $c) drop-shadow(0 -2px 0 $c);
 }
-.egg-hover .space-bg__flame { animation-duration: .2s; }
+.egg-hover body { cursor: pointer; }
+[data-egg-hover="ship"] {
+  .space-bg__ship { animation-play-state: paused; @include egg-outline(var(--c-star)); }
+  .space-bg__flame { animation-duration: .2s; }
+}
+[data-egg-hover="planet"] .space-bg__planet { opacity: 1; @include egg-outline(var(--c-nebula)); }
+
+// Meteor shower: pixel meteors falling toward the bottom-left (moved by WAAPI).
+.meteor-shower {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+}
+.meteor {
+  position: absolute;
+  display: block;
+  width: 32px;
+  height: 32px;
+  opacity: 0;
+  will-change: transform, opacity;
+  svg { display: block; image-rendering: pixelated; }
+}
+
+// Arcade score popup ("+1 WISH" over the planet, "+1 CONTACT" over the
+// alien): hops up, hangs, fades out. Colors per kind via --pop-main/--pop-sub.
+// Positioned (left/top) by space-eggs.js; translate(-50%) centers it there.
+.score-pop {
+  position: fixed;
+  z-index: 150;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--sp-1);
+  font-family: var(--font-pixel);
+  font-weight: 700;
+  line-height: 1;
+  white-space: nowrap;
+  text-shadow: var(--px) var(--px) 0 var(--c-shadow);
+  pointer-events: none;
+  transform: translate(-50%, 0);
+  animation: score-pop 1.6s steps(8, end) forwards;
+}
+.score-pop__score { font-size: var(--fs-xl); color: var(--pop-main); }
+.score-pop__total { font-size: var(--fs-sm); color: var(--pop-sub); }
+.score-pop--wish  { --pop-main: var(--c-star);   --pop-sub: var(--c-nebula); }
+.score-pop--alien { --pop-main: var(--c-plasma); --pop-sub: var(--c-star); }
+
+@keyframes score-pop {
+  0%   { opacity: 0; transform: translate(-50%, 0); }
+  12%  { opacity: 1; transform: translate(-50%, calc(var(--sp-5) * -1)); }   // hop
+  25%  { transform: translate(-50%, calc(var(--sp-4) * -1)); }              // settle
+  75%  { opacity: 1; transform: translate(-50%, calc(var(--sp-5) * -1)); }   // drift up
+  100% { opacity: 0; transform: translate(-50%, calc(var(--sp-6) * -1)); }
+}
 
 // Full-screen warp flash before navigating.
 .warp-flash {
@@ -108,5 +159,73 @@ $stars-near: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' w
 // Reduced motion: keep the stars, drop the movement.
 @media (prefers-reduced-motion: reduce) {
   .space-bg__stars--near, .space-bg__ship, .space-bg__flame { animation: none; }
+  .score-pop { animation: score-pop-still 1.6s steps(1, end) forwards; }
   .space-bg__ship { left: auto; right: 12vw; }
+}
+
+// Reduced motion: the score just appears, then vanishes (no hop / drift).
+@keyframes score-pop-still {
+  0%, 99% { opacity: 1; }
+  100%    { opacity: 0; }
+}
+
+// ---- Peeking alien (Study page, _includes/study-alien.html) ---------------
+// Sits just below the bottom edge; .is-up slides it up in 4 steps so its
+// hands grip the edge. Caught (.is-caught): "!" pops, the sprite jumps.
+.alien {
+  position: fixed;
+  bottom: 0;
+  z-index: 40;                 // above the page, below the sticky header
+  width: 96px;
+  height: 80px;
+  transform: translateY(100%);
+  transition: transform 400ms steps(4, end);
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+
+  &.is-up { transform: translateY(0); }
+  &:hover .alien__sprite { @include egg-outline(var(--c-star)); }
+}
+.alien__sprite {
+  display: block;
+  width: 100%;
+  height: 100%;
+  image-rendering: pixelated;
+}
+.alien__lids { opacity: 0; animation: alien-blink 2.6s steps(1, end) infinite; }
+.alien__alert {
+  position: absolute;
+  left: 50%;
+  bottom: 100%;
+  transform: translateX(-50%);
+  font-family: var(--font-pixel);
+  font-weight: 700;
+  font-size: var(--fs-xl);
+  line-height: 1;
+  color: var(--c-star);
+  text-shadow: var(--px) var(--px) 0 var(--c-shadow);
+  opacity: 0;
+}
+.alien.is-caught {
+  .alien__alert  { opacity: 1; }
+  .alien__lids   { animation: none; }              // eyes wide open
+  .alien__sprite { animation: alien-startle .48s steps(4, end); }
+}
+
+@keyframes alien-blink {
+  0%, 40% { opacity: 0; }
+  44%     { opacity: 1; }
+  48%     { opacity: 0; }
+}
+@keyframes alien-startle {
+  0%, 100% { transform: none; }
+  50%      { transform: translateY(calc(var(--sp-4) * -1)); }
+}
+
+@include mobile {
+  .alien { width: 48px; height: 40px; }   // 4px per sprite pixel
+}
+@media (prefers-reduced-motion: reduce) {
+  .alien { transition: none; }
+  .alien__lids, .alien.is-caught .alien__sprite { animation: none; }
 }

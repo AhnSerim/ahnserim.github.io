@@ -192,6 +192,24 @@
   align-items: center;
   gap: var(--sp-4);
 }
+// Egg achievements (locked until their egg is found): frame + label in the
+// egg's accent, trophy in its own color.
+.hidden-sector__achievement--wish,
+.hidden-sector__achievement--alien {
+  --frame-line: var(--achv-accent);
+  .hidden-sector__trophy { color: var(--achv-trophy); }
+  .hidden-sector__label  { color: var(--achv-accent); }
+
+  // Locked: greyed-out silhouette, no blinking label.
+  &.is-locked {
+    --frame-line: var(--c-border);
+    .hidden-sector__trophy { color: var(--c-space-600); }
+    .hidden-sector__label  { color: var(--c-text-dim); animation: none; }
+    .hidden-sector__title  { color: var(--c-text-dim); }
+  }
+}
+.hidden-sector__achievement--wish  { --achv-accent: var(--c-nebula); --achv-trophy: var(--c-star); }
+.hidden-sector__achievement--alien { --achv-accent: var(--c-plasma); --achv-trophy: var(--c-plasma); }
 .hidden-sector__trophy { flex: 0 0 auto; image-rendering: pixelated; }
 .hidden-sector__label {
   margin: 0 0 var(--sp-2);
