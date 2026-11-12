@@ -1,17 +1,24 @@
+{%- comment -%}
+  "Stage select" menu. Items come from _data/navigation.yml.
+  aria-current: "page" on the exact page, "true" on a section's sub-pages
+  (e.g. a Study post highlights Study).
+{%- endcomment -%}
+{%- assign here = page.url | replace: 'index.html', '' -%}
 <nav id="site-nav" class="site-nav" aria-label="주 메뉴">
+  <p class="site-nav__title" aria-hidden="true">SELECT STAGE</p>
   <ul class="site-nav__list">
     {%- for item in site.data.navigation -%}
       {%- assign current = nil -%}
-      {%- if page.url == item.url or item.url == '/' and page.url == '/index.html' -%}
+      {%- if here == item.url -%}
         {%- assign current = 'page' -%}
-      {%- elsif item.url != '/' and page.url contains item.url -%}
+      {%- elsif item.url != '/' and here contains item.url -%}
         {%- assign current = 'true' -%}
       {%- elsif item.section and page.section == item.section -%}
         {%- assign current = 'true' -%}
       {%- endif %}
-    <li>
+    <li class="site-nav__item">
       <a class="site-nav__link{% if item.section %} site-nav__link--{{ item.section }}{% endif %}" href="{{ item.url | relative_url }}"
-        {%- if current %} aria-current="{{ current }}"{% endif %}>{{ item.title }}</a>
+        {%- if current %} aria-current="{{ current }}"{% endif %}><span class="site-nav__label">{{ item.title }}</span></a>
     </li>
     {%- endfor %}
   </ul>

@@ -1,5 +1,8 @@
-# Top navigation. Items with `section` are also marked active on posts
-# whose front matter has the same `section` value.
+# Top navigation ("stage select" menu, see DESIGN.md §6).
+#   title   — label shown in the menu
+#   url     — target page
+#   section — (optional) section accent color; the item is also marked
+#             active on posts whose front matter has the same `section`.
 - title: Home
   url: /
 - title: Study
