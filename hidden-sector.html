@@ -1,0 +1,85 @@
+---
+layout: default
+title: "BONUS STAGE"
+permalink: /hidden-sector/
+description: "배경을 떠다니던 우주선을 붙잡은 사람만 오는 곳"
+sitemap: false
+noindex: true
+---
+{%- comment -%}
+  Easter-egg page. Reached by clicking the background ship (or the Konami
+  code) — see assets/js/stowaway.js. Not linked anywhere, noindex.
+  Feel free to rewrite the SECRET LOG entries below.
+{%- endcomment -%}
+<div class="container">
+  <header class="page-hero">
+    <p class="page-hero__kicker"><span class="pixel-caret" aria-hidden="true"></span>SECTOR 00 · CLASSIFIED</p>
+    <h1 class="page-hero__title">BONUS STAGE</h1>
+    <p class="page-hero__desc">축하해요! 배경을 떠다니던 우주선을 붙잡았네요. 여기는 지도에 없는 숨겨진 구역이에요.</p>
+  </header>
+
+  <div class="hidden-sector">
+    <figure class="hidden-sector__dock" aria-hidden="true">
+      <svg class="hidden-sector__ship" viewBox="0 0 12 8" width="192" height="128" shape-rendering="crispEdges">
+        <rect x="4" y="0" width="4" height="1" fill="#5ef0ff"/>
+        <rect x="2" y="1" width="8" height="3" fill="#e8ebff"/>
+        <rect x="5" y="2" width="2" height="1" fill="#5ef0ff"/>
+        <rect x="0" y="3" width="12" height="2" fill="#a9b0d6"/>
+        <rect x="2" y="5" width="2" height="1" fill="#ffe066"/>
+        <rect x="8" y="5" width="2" height="1" fill="#ffe066"/>
+        <rect x="2" y="6" width="2" height="2" fill="#ff7ad9" class="space-bg__flame"/>
+        <rect x="8" y="6" width="2" height="2" fill="#ff7ad9" class="space-bg__flame"/>
+      </svg>
+      <span class="hidden-sector__pad"></span>
+    </figure>
+
+    <section class="hidden-sector__achievement pixel-box" aria-labelledby="achv-title" data-reveal>
+      <svg class="hidden-sector__trophy" viewBox="0 0 8 8" width="48" height="48" aria-hidden="true" shape-rendering="crispEdges">
+        <rect x="1" y="0" width="6" height="1" fill="#ffe066"/>
+        <rect x="0" y="1" width="8" height="1" fill="#ffe066"/>
+        <rect x="0" y="2" width="1" height="1" fill="#ffe066"/><rect x="7" y="2" width="1" height="1" fill="#ffe066"/>
+        <rect x="1" y="1" width="6" height="3" fill="#ffe066"/>
+        <rect x="2" y="1" width="1" height="2" fill="#e8ebff"/>
+        <rect x="2" y="4" width="4" height="1" fill="#ffe066"/>
+        <rect x="3" y="5" width="2" height="1" fill="#a9b0d6"/>
+        <rect x="2" y="6" width="4" height="2" fill="#a9b0d6"/>
+      </svg>
+      <div>
+        <p class="hidden-sector__label">ACHIEVEMENT UNLOCKED</p>
+        <h2 class="hidden-sector__title" id="achv-title">밀항자 포획</h2>
+        <p class="hidden-sector__desc">
+          아무도 신경 쓰지 않던 우주선을 붙잡았어요.
+          <span class="hidden-sector__count" data-visit-count hidden></span>
+        </p>
+      </div>
+    </section>
+
+    <section class="hidden-sector__log pixel-box" aria-labelledby="log-title" data-reveal>
+      <p class="hidden-sector__label" id="log-title">PILOT'S SECRET LOG</p>
+      <ol class="hidden-sector__entries">
+        <li>이 블로그의 그림은 모두 손으로 찍은 픽셀 SVG예요. 행성도, 이 우주선도요.</li>
+        <li>우주선은 38초에 한 번씩 화면을 가로질러요. 그 사이에 잡았다면 꽤 날쌘 거예요.</li>
+        <li>키보드파 탐험가를 위한 비밀 항로도 있어요: <kbd>↑</kbd><kbd>↑</kbd><kbd>↓</kbd><kbd>↓</kbd><kbd>←</kbd><kbd>→</kbd><kbd>←</kbd><kbd>→</kbd><kbd>B</kbd><kbd>A</kbd></li>
+        <li>이 구역의 존재는 비밀로 해 주세요. 쉿.</li>
+      </ol>
+    </section>
+
+    <p class="hidden-sector__actions">
+      <a class="pixel-btn" href="{{ '/' | relative_url }}">◀ RETURN TO ORBIT</a>
+      <a class="pixel-btn pixel-btn--ghost" href="{{ '/guestbook/' | relative_url }}">발견 신호 남기기</a>
+    </p>
+  </div>
+</div>
+
+<script>
+  // Per-browser visit counter (localStorage; silently skipped if blocked).
+  (function () {
+    var el = document.querySelector('[data-visit-count]');
+    try {
+      var n = (parseInt(localStorage.getItem('serim.hidden-sector.visits'), 10) || 0) + 1;
+      localStorage.setItem('serim.hidden-sector.visits', n);
+      el.textContent = n === 1 ? '첫 번째 방문이에요!' : '벌써 ' + n + '번째 방문이에요.';
+      el.hidden = false;
+    } catch (e) {}
+  })();
+</script>

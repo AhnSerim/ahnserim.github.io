@@ -17,7 +17,7 @@ UI는 레트로 게임(부팅 화면, SECTOR, GAME OVER, ◀ PREV / NEXT ▶)의
 ### 핵심 원칙
 
 1. **장식은 픽셀, 본문은 가독성** — 픽셀 폰트는 제목·UI 라벨·숫자에만. 본문 단락·리스트는 Pretendard.
-2. **둥근 모서리 금지** — `border-radius`는 항상 0. 모서리를 다듬고 싶으면 `pixel-corners` 믹스인(계단형 노치)을 사용.
+2. **둥근 모서리 금지** — `border-radius`는 항상 0. 모서리를 다듬거나 깎고 싶으면 `pixel-corners`(작은 노치) 또는 `pixel-frame` + `px-stair()`(4px 계단형 실루엣)를 사용.
 3. **블러 없는 하드 그림자** — `box-shadow`는 오프셋만 있고 blur 0인 검은 그림자(`--pixel-shadow`, `--pixel-shadow-lg`)만 사용.
 4. **4px 픽셀 그리드** — 테두리 두께, 간격, 아이콘 크기는 모두 4px의 배수(일부 2px 허용).
 5. **계단식 움직임** — 트랜지션/애니메이션은 `steps()` 이징으로 8비트 느낌. 부드러운 ease는 쓰지 않음.
@@ -55,6 +55,8 @@ UI는 레트로 게임(부팅 화면, SECTOR, GAME OVER, ◀ PREV / NEXT ▶)의
 | `--c-nebula` (성운 핑크) | `#ff7ad9` | **Reading 섹션** · 태그 칩 · 인용문 |
 | `--c-border` | `#5a6bd0` | 픽셀 테두리, 구분선 (비텍스트 3:1 이상) |
 | `--c-shadow` | `#000000` | 하드 그림자 |
+| `--c-bevel-light` | `rgba(255,255,255,.45)` | 키캡 버튼 윗면 하이라이트 (inset, blur 0) |
+| `--c-bevel-dark` | `rgba(0,0,0,.3)` | 키캡 버튼 아랫면 · 눌림 (inset, blur 0) |
 
 ### 섹션별 액센트 규칙
 
@@ -72,7 +74,7 @@ UI는 레트로 게임(부팅 화면, SECTOR, GAME OVER, ◀ PREV / NEXT ▶)의
 
 ### 배경 그라디언트
 
-`.space-bg`에만 은은한 radial-gradient(보라 `rgba(91,68,176,.22)`, 핑크 `rgba(255,122,217,.08)`)를 허용합니다. 그 외 UI에는 그라디언트를 쓰지 않습니다(점선 `hr`의 repeating-linear-gradient 예외).
+`.space-bg`에만 은은한 radial-gradient(보라 `rgba(91,68,176,.22)`, 핑크 `rgba(255,122,217,.08)`)를 허용합니다. 그 외 UI에는 그라디언트를 쓰지 않습니다. 예외는 **딱 끊기는 픽셀 줄무늬용 repeating-linear-gradient**뿐(점선 `hr`, 읽기 게이지, 카트리지 그립, 착륙장 점선) — 색 전환 없이 4px 단위로 끊겨야 합니다.
 
 ### 코드 하이라이트 (Night sky, `_syntax.scss`)
 
@@ -152,10 +154,13 @@ UI는 레트로 게임(부팅 화면, SECTOR, GAME OVER, ◀ PREV / NEXT ▶)의
 | 이름 | 설명 |
 |---|---|
 | `@mixin pixel-corners($u)` | clip-path로 네 모서리를 한 칸씩 깎은 계단형 모서리. **box-shadow와 같이 쓰면 그림자가 잘리므로 함께 쓰지 않음.** |
-| `@mixin pixel-box` / `.pixel-box` | 표면색 + 4px 실선 테두리 + 큰 하드 그림자 박스 |
-| `.pixel-btn` | 노랑 배경 + 검정 글자 버튼. hover: `translate(-2px,-2px)` + 그림자 확대, active: `translate(4px,4px)` + 그림자 제거(눌림) |
-| `.pixel-btn--ghost` | 투명 배경 + 테두리만. hover 시 노랑 |
-| `.pixel-chip` / `--study` / `--reading` | 2px 테두리 라벨(태그·섹션). hover 시 색 반전 |
+| `px-stair($tl, $tr, $br, $bl)` | 모서리별로 4px 계단으로 깎는 clip-path polygon 함수. 값은 4px 배수(0 = 각진 모서리) |
+| `@mixin pixel-frame($shape, $bg, $line)` | **모양 있는 박스의 기본.** `::before`(테두리색, 전체 모양) + `::after`(표면색, 4px 안쪽) 두 레이어로 그리고, 그림자는 `filter: drop-shadow(… 0 …)`라 실루엣을 따라감. 요소 자체는 잘리지 않아 포커스 링이 보임. 색은 `--frame-line`/`--frame-bg`, 그림자 크기는 `--frame-shadow`로 바꿈. 의사요소를 쓰므로 다른 장식은 자식 요소로 |
+| `@mixin pixel-box` | (레거시) 표면색 + 4px 실선 테두리. 새 박스는 `pixel-frame` 사용 |
+| `.pixel-box` | **HUD 패널** — 좌상·우하 모서리를 12px 계단으로 깎은 정보 박스(404, 빈 상태, BOOK DATA, 방명록 안내) |
+| `.pixel-btn` | **아케이드 키캡** — 노랑 면 + 검정 외곽 + 4px 계단 모서리, 윗면 밝은/아랫면 어두운 4px 베벨. hover: `translate(-2px,-2px)` + 그림자 확대, active: `translate(4px,4px)` + 그림자 제거 + 베벨 반전(눌림) |
+| `.pixel-btn--ghost` | 어두운 키캡(남색 면 + 테두리색 외곽). hover 시 외곽·글자 노랑 |
+| `.pixel-chip` / `--study` / `--reading` | **픽셀 알약** — 2px 테두리 + 2px 계단 모서리(`pixel-corners(2px)`). hover 시 색 반전, 포커스 시 clip 해제(링 보이게) |
 | `.pixel-caret` | 제목·kicker 앞 8×8 픽셀 커서 블록 |
 | `.pixel-rating` | 5칸 픽셀 별점 (clip-path 별) |
 
@@ -176,16 +181,17 @@ UI는 레트로 게임(부팅 화면, SECTOR, GAME OVER, ◀ PREV / NEXT ▶)의
 | 네비게이션 | `_includes/nav.html`, `_data/navigation.yml` | 픽셀 폰트. 현재 페이지는 액센트 배경 + 검정 글자 + 그림자. Study/Reading은 섹션색 |
 | 우주 배경 | `_includes/space-bg.html`, `_space.scss` | 고정 배경. 별 타일 2레이어(원경 흐릿, 근경 twinkle), 픽셀 행성(우상단), 우주선(좌→우 38초 비행). 모두 `aria-hidden` |
 | 홈 히어로 | `_layouts/home.html` | `> BOOTING serim.space ...` 시안 부팅 문구 + 깜빡이는 커서, 큰 노랑 h1 |
-| 섹터 카드 | `.sector` | `SECTOR 01 / 02` kicker, 섹션색 테두리, 글 수 배지(`N편 ▶`) |
+| 섹터 카드 | `.sector` | **게임 카트리지** — 우상단 24px 계단 컷, `SECTOR 01 / 02` kicker, 섹션색 윗줄이 있는 라벨 스티커(제목·설명), 하단 글 수 배지(`N편 ▶`) + 그립 줄무늬. hover: 위로 뽑히며 테두리 섹션색, active: 꽂히듯 눌림 |
 | 페이지 히어로 | `.page-hero` | kicker(픽셀 캐럿 + 대문자) → 큰 제목 → 설명 → 액센트 배경 카운트 배지, 하단 점선 |
-| 포스트 카드 | `_includes/post-card.html` | 좌측 날짜 열(`MM.DD` / `YYYY`, 점선 구분) + 본문. 카드 전체 클릭(제목 링크 `::after`). Reading은 BOOK 라벨 + 별점 |
-| 포스트 상세 | `_layouts/post.html`, `_post.scss` | breadcrumb `/` 구분, 날짜·N분 읽기·섹션 칩, Reading은 `BOOK DATA` 박스, 하단 태그 · `◀ PREV / NEXT ▶` 페이저 · 목록으로 버튼 |
+| 포스트 카드 | `_includes/post-card.html` | **RPG 대화창** — 네 모서리 8px(2계단) 둥근 픽셀 창. hover/focus 시 테두리 섹션색 + 왼쪽 레인에 깜빡이는 `▶` 선택 커서(`.post-card__cursor`). 좌측 날짜 열(`MM.DD` / `YYYY`, 점선 구분) + 본문. 카드 전체 클릭(제목 링크 `::after`). Reading은 BOOK 라벨 + 별점 |
+| 포스트 상세 | `_layouts/post.html`, `_post.scss` | breadcrumb `/` 구분, 날짜·N분 읽기·섹션 칩, Reading은 `BOOK DATA` 박스, 하단 태그 · `◀ PREV / NEXT ▶` 페이저(**화살표 키** — 진행 방향 쪽 모서리를 16px 계단으로 깎은 블록, hover 시 그 방향으로 4px 이동) · 목록으로 버튼 |
 | 본문 (prose) | `_prose.scss` | h2 앞 `▸ ` + 하단 실선, h3 시안, ul 마커 `■` 노랑, 인용문 좌측 8px 핑크 바, 이미지 테두리+그림자, 코드블록 상단에 언어 라벨 바(`C`, `C++`, `ASM`…) |
 | 빈 상태 | `.empty-state` | `NO SIGNAL…` 깜빡임 |
 | 방명록 | `guestbook.html`, `_includes/giscus.html`, `.guestbook` | kicker `SIGNAL STATION · 방명록`, `HOW TO TRANSMIT` 안내 박스 + giscus(GitHub Discussions, Announcements 카테고리의 `guestbook` 글타래) 위젯. 설정은 `_config.yml`의 `giscus:`. 미설정 시 `SIGNAL OFFLINE` 빈 상태 |
 | giscus 테마 | `assets/css/giscus.css` | iframe 내부라 사이트 토큰을 못 씀 → 토큰 값을 **직접 복사**. 토큰 변경 시 이 파일도 함께 수정. 각진 모서리, 4px 테두리 + 하드 그림자, 픽셀 폰트 버튼 |
 | 읽기 진행 게이지 | `.scroll-progress` (헤더, 포스트에서만) | 헤더 하단 테두리 위에 12px 채움 + 4px 간격의 세그먼트 바. 16px 단위로만 차오름. 섹션색 |
 | 404 | `404.html` | 큰 핑크 `404` + `GAME OVER` + `▶ CONTINUE` 버튼 |
+| 숨겨진 구역 (이스터에그) | `hidden-sector.html` (`/hidden-sector/`), `.hidden-sector` | 배경 우주선을 클릭(또는 코나미 코드)하면 도착. `SECTOR 00 · CLASSIFIED` → `BONUS STAGE`, 착륙장 위에 떠 있는 큰 우주선, `ACHIEVEMENT UNLOCKED` 패널(방문 횟수, localStorage), `PILOT'S SECRET LOG`. 어디에도 링크하지 않고 `noindex`·`sitemap: false` |
 | 푸터 | `_includes/footer.html` | 픽셀 캐럿 + ©, GitHub · `맨 위로 ▲` |
 
 ---
@@ -206,6 +212,8 @@ UI는 레트로 게임(부팅 화면, SECTOR, GAME OVER, ◀ PREV / NEXT ▶)의
 | `twinkle` | 근경 별 | 4s `steps(4)` alternate |
 | `fly` | 우주선 | 38s linear 무한 |
 | `flicker` | 우주선 불꽃 | .4s `steps(2)` |
+| `warp-flash` | 이스터에그 진입 화면 번쩍임 | .6s `steps(6)` (우주선은 WAAPI로 `steps(6)` 발진) |
+| `hover-bob` | 숨겨진 구역의 우주선 | 1.6s `steps(2)` alternate, 8px |
 | `blink` | 커서, NO SIGNAL | 1–1.2s `steps(2, start)` |
 
 | `pixel-rise` | 스크롤로 화면에 들어오는 요소 | `--dur-reveal` 400ms, `--ease-reveal` `steps(4, end)` — 아래에서 16px을 4px씩 끊어 올라오며 나타남 |
@@ -268,6 +276,7 @@ assets/css/main.scss  위 파일 import 순서 정의
 assets/css/giscus.css giscus iframe용 테마 (Sass 미처리, 토큰 값 수동 복사)
 assets/js/nav.js      모바일 햄버거 메뉴
 assets/js/scroll-fx.js 스크롤 효과
+assets/js/stowaway.js  이스터에그 (우주선 클릭 / 코나미 코드 → /hidden-sector/)
 ```
 
 새 스타일은 역할에 맞는 파일에 추가하고, 재사용될 패턴이면 `_pixel.scss`/`_components.scss`로 올립니다.
@@ -280,3 +289,4 @@ assets/js/scroll-fx.js 스크롤 효과
 |---|---|
 | 2026-11-12 | 최초 작성 — space + pixel-art 테마(UI 리팩터 #1) 기준으로 정리 |
 | 2026-11-12 | 방명록(giscus + 픽셀 테마) 추가, 스크롤 효과(pixel-rise reveal, 읽기 진행 게이지, 별 패럴랙스) 추가, 모션 토큰 `--dur-reveal`·`--ease-reveal` 추가 |
+| 2026-11-12 | 박스 형태 리팩터: `px-stair()`·`pixel-frame` 도입. 섹터=카트리지, 포스트 카드=RPG 대화창(▶ 커서), 버튼=아케이드 키캡(베벨 토큰 `--c-bevel-*` 추가), 페이저=화살표 키, `.pixel-box`=HUD 패널, 칩=픽셀 알약. 배경 우주선 이스터에그 + `/hidden-sector/` 추가 |

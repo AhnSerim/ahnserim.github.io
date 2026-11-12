@@ -13,6 +13,86 @@
   );
 }
 
+// ---- Staircase silhouettes -------------------------------------------------
+// px-stair($tl, $tr, $br, $bl) → clip-path polygon whose corners are cut as
+// 4px staircases (cut size = multiple of 4px, 0 = square corner).
+// Because each step equals the border width, the same polygon on a layer
+// inset by 4px yields a perfectly even 4px outline (see pixel-frame).
+// Plain Sass 3 syntax on purpose: GitHub Pages compiles with Ruby Sass.
+@function _px-pt($x, $y) { @return unquote("#{$x} #{$y}"); }
+@function _px-from-end($v) { @return unquote("calc(100% - #{$v})"); }
+
+@function px-stair($tl: 0px, $tr: 0px, $br: 0px, $bl: 0px, $s: 4px) {
+  $pts: ();
+  // top-left: (0,c) → steps right/up → (c,0)
+  @if $tl == 0 { $pts: append($pts, _px-pt(0, 0), comma); }
+  @else {
+    @for $i from 0 to round($tl / $s) {
+      $pts: append($pts, _px-pt($i * $s, $tl - $i * $s), comma);
+      $pts: append($pts, _px-pt(($i + 1) * $s, $tl - $i * $s), comma);
+    }
+    $pts: append($pts, _px-pt($tl, 0), comma);
+  }
+  // top-right: (W-c,0) → steps down/right → (W,c)
+  @if $tr == 0 { $pts: append($pts, _px-pt(100%, 0), comma); }
+  @else {
+    @for $i from 0 to round($tr / $s) {
+      $pts: append($pts, _px-pt(_px-from-end($tr - $i * $s), $i * $s), comma);
+      $pts: append($pts, _px-pt(_px-from-end($tr - $i * $s), ($i + 1) * $s), comma);
+    }
+    $pts: append($pts, _px-pt(100%, $tr), comma);
+  }
+  // bottom-right: (W,H-c) → steps left/down → (W-c,H)
+  @if $br == 0 { $pts: append($pts, _px-pt(100%, 100%), comma); }
+  @else {
+    @for $i from 0 to round($br / $s) {
+      $pts: append($pts, _px-pt(_px-from-end($i * $s), _px-from-end($br - $i * $s)), comma);
+      $pts: append($pts, _px-pt(_px-from-end(($i + 1) * $s), _px-from-end($br - $i * $s)), comma);
+    }
+    $pts: append($pts, _px-pt(_px-from-end($br), 100%), comma);
+  }
+  // bottom-left: (c,H) → steps up/left → (0,H-c)
+  @if $bl == 0 { $pts: append($pts, _px-pt(0, 100%), comma); }
+  @else {
+    @for $i from 0 to round($bl / $s) {
+      $pts: append($pts, _px-pt($bl - $i * $s, _px-from-end($i * $s)), comma);
+      $pts: append($pts, _px-pt($bl - $i * $s, _px-from-end(($i + 1) * $s)), comma);
+    }
+    $pts: append($pts, _px-pt(0, _px-from-end($bl)), comma);
+  }
+  @return polygon($pts);
+}
+
+// Shaped box with a 4px outline and a hard drop shadow that follows the
+// silhouette. The element itself stays unclipped (so focus outlines and
+// overflowing children still show); two pseudo-element layers draw it:
+//   ::before = outline color (full shape), ::after = surface (inset 4px).
+// Recolor via --frame-line / --frame-bg; the shadow via --frame-shadow.
+// Note: uses ::before/::after — put other decorations on child elements.
+@mixin pixel-frame($shape, $bg: var(--c-space-800), $line: var(--c-border)) {
+  --frame-line: #{$line};
+  --frame-bg: #{$bg};
+  --frame-shadow: calc(var(--px) * 2);
+  position: relative;
+  isolation: isolate;
+  background: none;
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
+  filter: drop-shadow(var(--frame-shadow) var(--frame-shadow) 0 var(--c-shadow));
+
+  &::before,
+  &::after {
+    content: "";
+    position: absolute;
+    z-index: -1;
+    clip-path: $shape;
+    pointer-events: none;
+  }
+  &::before { inset: 0; background: var(--frame-line); }
+  &::after  { inset: var(--px); background: var(--frame-bg); }
+}
+
 // Box with a solid pixel border. Pair with --pixel-shadow(-lg) for the
 // hard 8-bit drop shadow (don't combine with pixel-corners: clip-path
 // would cut the shadow off).
@@ -23,54 +103,70 @@
   border-radius: 0;
 }
 
+// HUD panel: info boxes (404, empty state, BOOK DATA, guestbook guide).
+// Opposite corners (top-left / bottom-right) cut like a sci-fi console.
 .pixel-box {
-  @include pixel-box;
-  padding: var(--sp-4);
-  box-shadow: var(--pixel-shadow-lg);
+  @include pixel-frame(px-stair(12px, 0px, 12px, 0px));
+  padding: calc(var(--sp-4) + var(--px));
 }
 
-// ---- Buttons --------------------------------------------------------------
+// ---- Buttons: arcade keycaps ----------------------------------------------
+// Stepped corners + a 4px bevel (light top edge, dark bottom edge) on the
+// face. Hover lifts the key, active pushes it in and flips the bevel.
 .pixel-btn {
+  @include pixel-frame(px-stair(4px, 4px, 4px, 4px), var(--c-star), var(--c-space-900));
+  --frame-shadow: var(--px);
   display: inline-flex;
   align-items: center;
   gap: var(--sp-2);
   min-height: 44px;            // touch target
-  padding: var(--sp-2) var(--sp-3);
+  padding: calc(var(--sp-2) + var(--px)) calc(var(--sp-3) + var(--px)) calc(var(--sp-2) + var(--px) * 2);
   font-family: var(--font-pixel);
   font-size: var(--fs-sm);
   line-height: 1;
   color: var(--c-space-900);
-  background: var(--c-star);
-  border: var(--px) solid var(--c-space-900);
-  border-radius: 0;
-  box-shadow: var(--pixel-shadow);
   text-decoration: none;
   cursor: pointer;
   transition: transform var(--dur-fast) var(--ease-step),
-              box-shadow var(--dur-fast) var(--ease-step);
+              filter var(--dur-fast) var(--ease-step);
 
-  &:hover { color: var(--c-space-900); transform: translate(-2px, -2px); box-shadow: 6px 6px 0 0 var(--c-shadow); }
-  &:active { transform: translate(var(--px), var(--px)); box-shadow: none; }
+  &::after {
+    box-shadow: inset 0 var(--px) 0 0 var(--c-bevel-light),
+                inset 0 calc(var(--px) * -1) 0 0 var(--c-bevel-dark);
+  }
 
+  &:hover { color: var(--c-space-900); transform: translate(-2px, -2px); --frame-shadow: calc(var(--px) + 2px); }
+  &:active {
+    transform: translate(var(--px), var(--px));
+    filter: none;
+    &::after {
+      box-shadow: inset 0 var(--px) 0 0 var(--c-bevel-dark);
+    }
+  }
+
+  // Dark keycap with an outline; lights up yellow on hover.
   &--ghost {
+    --frame-line: var(--c-border);
+    --frame-bg: var(--c-space-800);
     color: var(--c-text);
-    background: transparent;
-    border-color: var(--c-border);
-    &:hover { color: var(--c-star); border-color: var(--c-star); }
+    &:hover { color: var(--c-star); --frame-line: var(--c-star); }
   }
 }
 
-// ---- Chips (tags / section labels) ---------------------------------------
+// ---- Chips (tags / section labels): pixel pills ---------------------------
+// The 2px stepped corners also notch the border → classic 8-bit pill.
 .pixel-chip {
   display: inline-block;
-  padding: 2px var(--sp-2);
+  padding: 2px calc(var(--sp-2) + 2px);
   font-family: var(--font-pixel);
   font-size: var(--fs-xs);
   line-height: 1.6;
   color: var(--c-nebula);
   border: 2px solid currentColor;
   text-decoration: none;
+  @include pixel-corners(2px);
   &:hover { color: var(--c-space-900); background: var(--c-nebula); }
+  &:focus-visible { clip-path: none; } // clip-path would cut the focus ring
 
   &--study   { color: var(--c-plasma); &:hover { background: var(--c-plasma); } }
   &--reading { color: var(--c-nebula); }

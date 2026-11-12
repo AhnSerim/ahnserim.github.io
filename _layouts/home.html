@@ -14,15 +14,25 @@ layout: default
   <section class="sectors" aria-label="섹션 바로가기">
     <a class="sector sector--study" data-reveal href="{{ '/study/' | relative_url }}">
       <span class="sector__kicker">SECTOR 01</span>
-      <span class="sector__title">Study</span>
-      <span class="sector__desc">C · C++ · 컴퓨터 아키텍처 공부 노트</span>
-      <span class="sector__count">{{ study_posts.size }}편 ▶</span>
+      <span class="sector__label">
+        <span class="sector__title">Study</span>
+        <span class="sector__desc">C · C++ · 컴퓨터 아키텍처 공부 노트</span>
+      </span>
+      <span class="sector__foot">
+        <span class="sector__count">{{ study_posts.size }}편 ▶</span>
+        <span class="sector__grip" aria-hidden="true"></span>
+      </span>
     </a>
     <a class="sector sector--reading" data-reveal href="{{ '/reading/' | relative_url }}">
       <span class="sector__kicker">SECTOR 02</span>
-      <span class="sector__title">Reading</span>
-      <span class="sector__desc">읽은 책의 기록과 리뷰</span>
-      <span class="sector__count">{{ reading_posts.size }}권 ▶</span>
+      <span class="sector__label">
+        <span class="sector__title">Reading</span>
+        <span class="sector__desc">읽은 책의 기록과 리뷰</span>
+      </span>
+      <span class="sector__foot">
+        <span class="sector__count">{{ reading_posts.size }}권 ▶</span>
+        <span class="sector__grip" aria-hidden="true"></span>
+      </span>
     </a>
   </section>
 
