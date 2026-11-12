@@ -54,27 +54,45 @@
   gap: var(--sp-4);
 }
 
-// ---- Post card ------------------------------------------------------------
+// ---- Post card: RPG dialog window -----------------------------------------
+// 2-step rounded pixel corners like a classic RPG message window. A lane on
+// the left holds the blinking ▶ selection cursor shown on hover/focus.
 .post-card {
+  @include pixel-frame(px-stair(8px, 8px, 8px, 8px));
   --accent: var(--c-star);
+  --cursor-lane: var(--sp-4);
   display: grid;
   grid-template-columns: 96px 1fr;
   gap: var(--sp-4);
-  padding: var(--sp-4);
-  background: var(--c-space-800);
-  border: var(--px) solid var(--c-border);
-  box-shadow: var(--pixel-shadow-lg);
-  transition: transform var(--dur-fast) var(--ease-step),
-              border-color var(--dur-fast) var(--ease-step);
+  padding: calc(var(--sp-4) + var(--px));
+  padding-left: calc(var(--sp-4) + var(--px) + var(--cursor-lane));
+  transition: transform var(--dur-fast) var(--ease-step);
 
   &--study   { --accent: var(--c-plasma); }
   &--reading { --accent: var(--c-nebula); }
 
   &:hover,
   &:focus-within {
-    border-color: var(--accent);
+    --frame-line: var(--accent);
     transform: translate(-2px, -2px);
   }
+  &:hover .post-card__cursor,
+  &:focus-within .post-card__cursor { visibility: visible; }
+}
+
+.post-card__cursor {
+  position: absolute;
+  top: calc(var(--sp-4) + var(--px));
+  left: calc(var(--sp-3) + var(--px));
+  width: 12px;
+  height: 20px;
+  margin-top: 2px; // centre on the MM.DD line
+  background: var(--accent);
+  // pixel ▶: 3 columns × 5 rows of 4px
+  clip-path: polygon(0 0, 33.33% 0, 33.33% 20%, 66.67% 20%, 66.67% 40%, 100% 40%, 100% 60%,
+                     66.67% 60%, 66.67% 80%, 33.33% 80%, 33.33% 100%, 0 100%);
+  visibility: hidden;
+  animation: blink 1s steps(2, start) infinite;
 }
 
 .post-card__date {
@@ -175,7 +193,14 @@
 
 // ---- Tablet ---------------------------------------------------------------
 @include tablet {
-  .post-card { grid-template-columns: 80px 1fr; gap: var(--sp-3); padding: var(--sp-3); }
+  .post-card {
+    --cursor-lane: var(--sp-3);
+    grid-template-columns: 80px 1fr;
+    gap: var(--sp-3);
+    padding: calc(var(--sp-3) + var(--px));
+    padding-left: calc(var(--sp-3) + var(--px) + var(--cursor-lane));
+  }
+  .post-card__cursor { top: calc(var(--sp-3) + var(--px)); left: calc(var(--sp-2) + var(--px)); }
 }
 
 // ---- Mobile ---------------------------------------------------------------
@@ -185,8 +210,10 @@
   .post-card {
     grid-template-columns: 1fr;
     gap: var(--sp-2);
-    box-shadow: var(--pixel-shadow);
+    --frame-shadow: var(--px);
   }
+  // Date sits on its own row here; the cursor marks that row.
+  .post-card__cursor { margin-top: -1px; }
   .post-card__date {
     flex-direction: row;
     gap: var(--sp-2);

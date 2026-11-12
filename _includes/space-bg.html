@@ -1,8 +1,9 @@
 {%- comment -%}
   Decorative background: two tiled pixel-star layers (CSS) + a pixel planet
   and a small ship (inline SVG). Purely decorative → aria-hidden.
+  Easter egg: clicking the ship warps to `data-egg` (assets/js/stowaway.js).
 {%- endcomment -%}
-<div class="space-bg" aria-hidden="true">
+<div class="space-bg" aria-hidden="true" data-egg="{{ '/hidden-sector/' | relative_url }}">
   <div class="space-bg__stars space-bg__stars--far"></div>
   <div class="space-bg__stars space-bg__stars--near"></div>
 

@@ -28,6 +28,8 @@ $bp-mobile: 767px;  // ~767px
   --c-plasma: #5ef0ff;     /* focus, study   14.4:1 */
   --c-border: #5a6bd0;     /* pixel borders: 3.8:1 on 800, 3.2:1 on 700 (non-text >=3:1) */
   --c-shadow: #000000;
+  --c-bevel-light: rgba(255, 255, 255, .45); /* keycap top edge */
+  --c-bevel-dark:  rgba(0, 0, 0, .3);        /* keycap bottom edge / pressed */
 
   /* ---- Typography ---- */
   --font-pixel: "Galmuri11", "DungGeunMo", "Courier New", monospace;

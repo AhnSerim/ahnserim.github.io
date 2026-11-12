@@ -62,6 +62,41 @@ $stars-near: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' w
 }
 @keyframes flicker { 50% { opacity: .3; } }
 
+// ---- Easter egg (assets/js/stowaway.js) -----------------------------------
+// Hovering the ship over empty space: it stops, glows, and the cursor hints.
+.egg-hover body { cursor: pointer; }
+.egg-hover .space-bg__ship {
+  animation-play-state: paused;
+  // 2px hard yellow outline, built from four offset (blur 0) shadows
+  filter: drop-shadow(2px 0 0 var(--c-star)) drop-shadow(-2px 0 0 var(--c-star))
+          drop-shadow(0 2px 0 var(--c-star)) drop-shadow(0 -2px 0 var(--c-star));
+}
+.egg-hover .space-bg__flame { animation-duration: .2s; }
+
+// Full-screen warp flash before navigating.
+.warp-flash {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  display: grid;
+  place-items: center;
+  background: var(--c-space-900);
+  pointer-events: none;
+  animation: warp-flash .6s steps(6, end) forwards;
+}
+.warp-flash__text {
+  font-family: var(--font-pixel);
+  font-size: var(--fs-2xl);
+  color: var(--c-star);
+  text-shadow: var(--px) var(--px) 0 var(--c-shadow);
+}
+@keyframes warp-flash {
+  0%   { opacity: 0; }
+  33%  { opacity: 1; background: var(--c-text); }
+  50%  { background: var(--c-space-900); }
+  100% { opacity: 1; background: var(--c-space-900); }
+}
+
 @include tablet {
   .space-bg__planet { width: 112px; right: 2vw; opacity: .6; }
 }

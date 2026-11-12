@@ -39,40 +39,67 @@
   gap: var(--sp-4);
   margin-bottom: var(--sp-6);
 }
+// Game cartridges: top-right corner cut in a 6-step staircase, a label
+// "sticker" (accent stripe on top) and grip ridges at the bottom.
+// Hover pulls the cartridge out; active "slots it in".
 .sector {
+  @include pixel-frame(px-stair(4px, 24px, 4px, 4px), var(--c-space-800), var(--c-border));
   --accent: var(--c-star);
   display: flex;
   flex-direction: column;
-  gap: var(--sp-2);
-  padding: var(--sp-4);
-  background: var(--c-space-800);
-  border: var(--px) solid var(--accent);
-  box-shadow: var(--pixel-shadow-lg);
+  gap: var(--sp-3);
+  padding: calc(var(--sp-3) + var(--px));
+  padding-right: calc(var(--sp-5) + var(--px)); // clear the cut corner
   color: var(--c-text);
   text-decoration: none;
-  transition: transform var(--dur-fast) var(--ease-step), box-shadow var(--dur-fast) var(--ease-step);
+  transition: transform var(--dur-fast) var(--ease-step);
 
   &--study   { --accent: var(--c-plasma); }
   &--reading { --accent: var(--c-nebula); }
 
   &:hover {
+    --frame-line: var(--accent);
+    --frame-shadow: calc(var(--px) * 3);
     color: var(--c-text);
-    transform: translate(-2px, -2px);
-    box-shadow: 10px 10px 0 0 var(--c-shadow);
+    transform: translate(0, calc(var(--px) * -1));
   }
-  &:active { transform: translate(var(--px), var(--px)); box-shadow: none; }
+  &:active { transform: translate(var(--px), var(--px)); filter: none; }
 }
 .sector__kicker { font-family: var(--font-pixel); font-size: var(--fs-xs); color: var(--accent); }
+
+.sector__label {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-2);
+  margin-right: calc(var(--sp-5) * -1 + var(--sp-3)); // label spans under the cut
+  padding: var(--sp-3);
+  background: var(--c-space-900);
+  border: 2px solid var(--c-space-600);
+  border-top: var(--px) solid var(--accent);
+}
 .sector__title  { font-family: var(--font-pixel); font-size: var(--fs-xl); }
 .sector__desc   { color: var(--c-text-dim); font-size: var(--fs-sm); }
+
+.sector__foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--sp-3);
+  margin-right: calc(var(--sp-5) * -1 + var(--sp-3));
+}
 .sector__count  {
-  align-self: flex-start;
-  margin-top: var(--sp-2);
   padding: 2px var(--sp-2);
   font-family: var(--font-pixel);
   font-size: var(--fs-xs);
   color: var(--c-space-900);
   background: var(--accent);
+}
+// Grip ridges: 4px bars with 4px gaps.
+.sector__grip {
+  flex: 0 0 auto;
+  width: 60px;
+  height: var(--sp-3);
+  background: repeating-linear-gradient(90deg, var(--c-space-600) 0 4px, transparent 4px 8px);
 }
 
 .recent__title { margin: 0 0 var(--sp-4); font-size: var(--fs-xl); }
@@ -131,6 +158,79 @@
   min-height: 240px; // reserve room while the giscus iframe loads
 }
 
+// ---- Hidden sector (easter egg) -------------------------------------------
+.hidden-sector {
+  max-width: var(--content-w);
+  > * + * { margin-top: var(--sp-5); }
+}
+.hidden-sector__dock {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--sp-3);
+  margin: 0;
+  padding-block: var(--sp-4);
+}
+.hidden-sector__ship {
+  image-rendering: pixelated;
+  animation: hover-bob 1.6s steps(2, end) infinite alternate;
+}
+// Landing pad: dashed pixel line under the ship.
+.hidden-sector__pad {
+  width: 240px;
+  height: var(--px);
+  background: repeating-linear-gradient(90deg, var(--c-star) 0 8px, transparent 8px 16px);
+}
+@keyframes hover-bob {
+  from { transform: translateY(0); }
+  to   { transform: translateY(calc(var(--px) * -2)); }
+}
+
+.hidden-sector__achievement {
+  --frame-line: var(--c-star);
+  display: flex;
+  align-items: center;
+  gap: var(--sp-4);
+}
+.hidden-sector__trophy { flex: 0 0 auto; image-rendering: pixelated; }
+.hidden-sector__label {
+  margin: 0 0 var(--sp-2);
+  font-family: var(--font-pixel);
+  font-size: var(--fs-xs);
+  letter-spacing: .08em;
+  color: var(--c-star);
+  animation: blink 1.2s steps(2, start) 3;
+}
+.hidden-sector__title { margin: 0 0 var(--sp-2); font-size: var(--fs-xl); }
+.hidden-sector__desc  { margin: 0; color: var(--c-text-dim); }
+.hidden-sector__count { color: var(--c-plasma); }
+
+.hidden-sector__entries {
+  margin: 0;
+  padding-left: 1.5em;
+  color: var(--c-text-dim);
+  li + li { margin-top: var(--sp-2); }
+  li::marker { font-family: var(--font-pixel); color: var(--c-star); }
+  kbd {
+    display: inline-block;
+    min-width: 1.6em;
+    margin: 0 2px;
+    padding: 0 var(--sp-1);
+    font-family: var(--font-pixel);
+    font-size: var(--fs-xs);
+    text-align: center;
+    color: var(--c-text);
+    background: var(--c-space-700);
+    border: 2px solid var(--c-border);
+    border-bottom-width: var(--px);
+  }
+}
+.hidden-sector__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--sp-3);
+}
+
 // ---- 404 ------------------------------------------------------------------
 .not-found {
   max-width: 560px;
@@ -165,4 +265,6 @@
   .home-hero__content p { font-size: var(--fs-base); }
   .sectors { grid-template-columns: 1fr; margin-bottom: var(--sp-5); }
   .not-found__code { font-size: 3.5rem; }
+  .hidden-sector__ship { width: 144px; height: 96px; }
+  .hidden-sector__achievement { align-items: flex-start; gap: var(--sp-3); }
 }

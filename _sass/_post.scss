@@ -52,8 +52,8 @@
 // ---- Reading: book data box ----------------------------------------------
 .book-info {
   margin-top: var(--sp-4);
-  padding: var(--sp-3) var(--sp-4);
-  border-color: var(--c-nebula);
+  --frame-line: var(--c-nebula);
+  padding: calc(var(--sp-3) + var(--px)) calc(var(--sp-4) + var(--px));
   font-size: var(--fs-sm);
 
   dl {
@@ -87,19 +87,30 @@
   grid-template-columns: 1fr 1fr;
   gap: var(--sp-3);
 }
+// Arrow keys: the side facing the direction is cut into a 4-step
+// staircase point, and hover nudges the key 4px that way.
 .post-pager__link {
+  @include pixel-frame(px-stair(16px, 4px, 4px, 16px));
+  --frame-shadow: var(--px);
   display: flex;
   flex-direction: column;
   gap: var(--sp-1);
-  padding: var(--sp-3);
-  background: var(--c-space-800);
-  border: var(--px) solid var(--c-border);
-  box-shadow: var(--pixel-shadow);
+  padding: calc(var(--sp-3) + var(--px)) calc(var(--sp-3) + var(--px)) calc(var(--sp-3) + var(--px)) calc(var(--sp-4) + var(--px));
   color: var(--c-text);
   text-decoration: none;
-  &:hover { border-color: var(--accent); color: var(--c-text); }
+  transition: transform var(--dur-fast) var(--ease-step);
 
-  &--next { grid-column: 2; text-align: right; }
+  &:hover { --frame-line: var(--accent); color: var(--c-text); transform: translateX(calc(var(--px) * -1)); }
+  &:active { transform: translate(0, var(--px)); filter: none; }
+
+  &--next {
+    grid-column: 2;
+    text-align: right;
+    padding-left: calc(var(--sp-3) + var(--px));
+    padding-right: calc(var(--sp-4) + var(--px));
+    &::before, &::after { clip-path: px-stair(4px, 16px, 16px, 4px); }
+    &:hover { transform: translateX(var(--px)); }
+  }
 }
 .post-pager__dir   { font-family: var(--font-pixel); font-size: var(--fs-xs); color: var(--accent); }
 .post-pager__title { font-size: var(--fs-sm); }
@@ -110,5 +121,5 @@
   .post__title { text-shadow: 2px 2px 0 var(--c-shadow); }
   .post-pager { grid-template-columns: 1fr; }
   .post-pager__link--next { grid-column: auto; }
-  .book-info { padding: var(--sp-3); }
+  .book-info { padding: calc(var(--sp-3) + var(--px)); }
 }

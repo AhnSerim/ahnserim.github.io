@@ -10,6 +10,7 @@
 {%- endcomment -%}
 {%- assign post = include.post -%}
 <article class="post-card{% if post.section %} post-card--{{ post.section }}{% endif %}" data-reveal>
+  <span class="post-card__cursor" aria-hidden="true"></span>
   <time class="post-card__date" datetime="{{ post.date | date_to_xmlschema }}">
     <span class="post-card__day">{{ post.date | date: '%m.%d' }}</span>
     <span class="post-card__year">{{ post.date | date: '%Y' }}</span>
