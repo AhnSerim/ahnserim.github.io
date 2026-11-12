@@ -1,0 +1,40 @@
+---
+layout: default
+---
+{%- comment -%}
+  Section list page (Study / Reading). Page front matter:
+    section: study | reading   ← posts with the same `section` are listed
+    title, description, kicker, count_label (e.g. "권의 책 기록")
+{%- endcomment -%}
+{%- assign posts = site.posts | where: "section", page.section -%}
+<div class="container">
+  <header class="page-hero page-hero--{{ page.section }}">
+    <p class="page-hero__kicker"><span class="pixel-caret" aria-hidden="true"></span>{{ page.kicker | default: 'SECTION' }}</p>
+    <h1 class="page-hero__title">{{ page.title }}</h1>
+    {%- if page.description %}
+    <p class="page-hero__desc">{{ page.description }}</p>
+    {%- endif %}
+    <p class="page-hero__count">{{ posts.size }}{{ page.count_label | default: '개의 글' }}</p>
+  </header>
+
+  {{ content }}
+
+  {%- if posts.size > 0 %}
+  {%- assign by_year = posts | group_by_exp: "p", "p.date | date: '%Y'" -%}
+  {%- for year in by_year %}
+  <section class="post-group" aria-labelledby="y-{{ year.name }}">
+    <h2 class="post-group__year" id="y-{{ year.name }}">{{ year.name }}</h2>
+    <div class="post-list">
+      {%- for post in year.items %}
+      {% include post-card.html post=post %}
+      {%- endfor %}
+    </div>
+  </section>
+  {%- endfor %}
+  {%- else %}
+  <div class="empty-state pixel-box">
+    <p class="empty-state__title">NO SIGNAL…</p>
+    <p>아직 이 구역에 도착한 글이 없어요. 곧 착륙할 예정입니다.</p>
+  </div>
+  {%- endif %}
+</div>

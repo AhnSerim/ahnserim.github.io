@@ -1,0 +1,27 @@
+// ==========================================================================
+// Rouge syntax theme ("night sky"). All colors >= 8:1 on #111733 (AA).
+// ==========================================================================
+
+.highlight {
+  color: var(--c-text);
+
+  .c, .c1, .cm, .cs, .ch, .cd  { color: #a9b0d6; font-style: italic; } // comments  7.9:1
+  .cp, .cpf                    { color: #ffb86b; }                      // #include  10.3:1
+  .k, .kd, .kn, .kr, .kc, .kp  { color: #ff7ad9; }                      // keywords   7.5:1
+  .kt                          { color: #5ef0ff; }                      // types     13.0:1
+  .s, .s1, .s2, .sb, .sc, .sh,
+  .sd, .se, .si, .sx, .sr, .ss { color: #b8f28c; }                      // strings   13.5:1
+  .m, .mi, .mf, .mh, .mo, .mb,
+  .il                          { color: #ffe066; }                      // numbers   14.4:1
+  .nf, .fm                     { color: #8fd3ff; }                      // functions 10.8:1
+  .nc, .nn, .nt                { color: #c9a7ff; }                      // classes    8.8:1
+  .na, .nb, .bp                { color: #8fd3ff; }
+  .nl, .nv, .vi, .vg           { color: var(--c-text); }
+  .o, .ow, .p                  { color: #c9cff5; }
+  .err                         { color: #ff9e9e; }                      // errors     8.9:1
+  .gd                          { color: #ff9e9e; }
+  .gi                          { color: #b8f28c; }
+  .gh, .gu                     { color: #ffe066; }
+  .ge                          { font-style: italic; }
+  .gs                          { font-weight: 700; }
+}

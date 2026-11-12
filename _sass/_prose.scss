@@ -1,0 +1,133 @@
+// ==========================================================================
+// Prose: rendered Markdown. Readability first — body font, 720px measure,
+// generous line-height. Pixel styling only on headings and frames.
+// ==========================================================================
+
+.prose {
+  max-width: var(--content-w);
+  font-size: var(--fs-base);
+  line-height: var(--lh-body);
+
+  > :first-child { margin-top: 0; }
+
+  h2 {
+    margin-top: var(--sp-6);
+    padding-bottom: var(--sp-2);
+    border-bottom: var(--px) solid var(--c-border);
+  }
+  h2::before {
+    content: "▸ ";
+    color: var(--c-star);
+  }
+  h3 { margin-top: var(--sp-5); color: var(--c-plasma); }
+  h4 { margin-top: var(--sp-4); color: var(--c-text-dim); }
+
+  p, li { color: var(--c-text); }
+
+  ul, ol { padding-left: 1.5em; }
+  li + li { margin-top: var(--sp-1); }
+  ul > li::marker { content: "■ "; color: var(--c-star); font-size: .7em; }
+  ol > li::marker { font-family: var(--font-pixel); color: var(--c-star); }
+
+  strong { color: #fff; }
+
+  blockquote {
+    margin-inline: 0;
+    padding: var(--sp-3) var(--sp-4);
+    background: var(--c-space-800);
+    border-left: calc(var(--px) * 2) solid var(--c-nebula);
+    color: var(--c-text-dim);
+    > :last-child { margin-bottom: 0; }
+  }
+
+  img {
+    display: block;
+    margin: var(--sp-4) auto;
+    border: var(--px) solid var(--c-border);
+    box-shadow: var(--pixel-shadow-lg);
+  }
+
+  // Inline code
+  :not(pre) > code {
+    padding: .1em .4em;
+    background: var(--c-space-600);
+    color: var(--c-text);
+    border-radius: 0;
+    word-break: break-word;
+  }
+
+  // Tables scroll horizontally on small screens instead of breaking layout.
+  table {
+    display: block;
+    width: 100%;
+    overflow-x: auto;
+    border-collapse: collapse;
+    font-size: var(--fs-sm);
+  }
+  th, td {
+    padding: var(--sp-2) var(--sp-3);
+    border: 2px solid var(--c-border);
+    text-align: left;
+  }
+  th {
+    font-family: var(--font-pixel);
+    font-weight: 400;
+    background: var(--c-space-700);
+  }
+
+  // Code blocks (Rouge). The frame is pixel-styled; the code stays readable.
+  div.highlighter-rouge,
+  figure.highlight {
+    position: relative;
+    margin: var(--sp-4) 0;
+    border: var(--px) solid var(--c-border);
+    box-shadow: var(--pixel-shadow-lg);
+    background: #111733;
+  }
+  // Language label from kramdown's `language-xxx` class (set via ::before
+  // only for common languages to keep it simple).
+  div.highlighter-rouge::before {
+    display: block;
+    padding: var(--sp-1) var(--sp-3);
+    font-family: var(--font-pixel);
+    font-size: var(--fs-xs);
+    color: var(--c-text-dim);
+    background: var(--c-space-700);
+    border-bottom: 2px solid var(--c-border);
+  }
+  .language-c::before          { content: "C"; }
+  .language-cpp::before,
+  .language-c\+\+::before      { content: "C++"; }
+  .language-asm::before,
+  .language-nasm::before       { content: "ASM"; }
+  .language-bash::before,
+  .language-shell::before,
+  .language-sh::before         { content: "SHELL"; }
+  .language-python::before     { content: "PYTHON"; }
+  .language-verilog::before    { content: "VERILOG"; }
+
+  pre {
+    margin: 0;
+    padding: var(--sp-3) var(--sp-4);
+    overflow-x: auto;
+    font-size: var(--fs-sm);
+    line-height: 1.6;
+    tab-size: 4;
+    background: transparent;
+  }
+  pre code { background: none; padding: 0; }
+}
+
+@include mobile {
+  .prose {
+    pre { padding: var(--sp-3); font-size: var(--fs-xs); }
+    div.highlighter-rouge, figure.highlight {
+      // full-bleed code on phones: more room for long lines
+      margin-inline: calc(var(--gutter) * -1);
+      border-left: 0;
+      border-right: 0;
+      box-shadow: none;
+    }
+    h2 { margin-top: var(--sp-5); }
+  }
+}

@@ -1,7 +1,36 @@
 title: "Serim's space"
-description: "blog"
+description: "C · C++ · 컴퓨터 아키텍처 공부와 독서 기록"
+lang: ko
+url: "https://serim.space"
+baseurl: ""
+author: serim ahn
+repository: AhnSerim/ahnserim.github.io
+theme: null # no built-in GitHub Pages theme; layouts live in this repo
 
-remote_theme: "pages-themes/cayman@v0.2.0"
+# Keep the original date-based URLs (/YYYY/MM/DD/slug.html) explicitly,
+# so adding categories/sections to posts never changes existing links.
+permalink: /:year/:month/:day/:title:output_ext
+
+timezone: Asia/Seoul
+markdown: kramdown
+highlighter: rouge
+kramdown:
+  input: GFM
+  syntax_highlighter_opts:
+    css_class: highlight
+
 plugins:
-  - jekyll-remote-theme
-minimal_mistakes_include_cache: false
+  - jekyll-seo-tag
+
+defaults:
+  - scope: { path: "", type: posts }
+    values: { layout: post }
+  - scope: { path: "" }
+    values: { layout: default }
+
+exclude:
+  - Gemfile
+  - Gemfile.lock
+  - README.md
+  - vendor
+  - .jekyll-cache

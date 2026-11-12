@@ -1,0 +1,41 @@
+---
+layout: default
+---
+{%- assign study_posts = site.posts | where: "section", "study" -%}
+{%- assign reading_posts = site.posts | where: "section", "reading" -%}
+<div class="container">
+  <section class="home-hero" aria-labelledby="home-title">
+    <p class="home-hero__boot" aria-hidden="true">&gt; BOOTING serim.space ...<span class="home-hero__cursor"></span></p>
+    <div class="home-hero__content prose" id="home-title-wrap">
+      {{ content }}
+    </div>
+  </section>
+
+  <section class="sectors" aria-label="섹션 바로가기">
+    <a class="sector sector--study" href="{{ '/study/' | relative_url }}">
+      <span class="sector__kicker">SECTOR 01</span>
+      <span class="sector__title">Study</span>
+      <span class="sector__desc">C · C++ · 컴퓨터 아키텍처 공부 노트</span>
+      <span class="sector__count">{{ study_posts.size }}편 ▶</span>
+    </a>
+    <a class="sector sector--reading" href="{{ '/reading/' | relative_url }}">
+      <span class="sector__kicker">SECTOR 02</span>
+      <span class="sector__title">Reading</span>
+      <span class="sector__desc">읽은 책의 기록과 리뷰</span>
+      <span class="sector__count">{{ reading_posts.size }}권 ▶</span>
+    </a>
+  </section>
+
+  <section class="recent" aria-labelledby="recent-title">
+    <h2 class="recent__title" id="recent-title"><span class="pixel-caret" aria-hidden="true"></span>최근 글</h2>
+    {%- if site.posts.size > 0 %}
+    <div class="post-list">
+      {%- for post in site.posts limit: 6 %}
+      {% include post-card.html post=post show_section=true %}
+      {%- endfor %}
+    </div>
+    {%- else %}
+    <p class="empty-state">아직 글이 없어요.</p>
+    {%- endif %}
+  </section>
+</div>

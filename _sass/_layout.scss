@@ -1,0 +1,173 @@
+// ==========================================================================
+// Layout shell: header, navigation (hamburger on mobile), main, footer.
+// Desktop-first: base rules = >=1024px, then tablet / mobile overrides.
+// ==========================================================================
+
+body {
+  display: flex;
+  flex-direction: column;
+}
+
+.site-main {
+  flex: 1;
+  padding-block: var(--sp-6);
+  &:focus { outline: none; }
+}
+
+// ---- Header ---------------------------------------------------------------
+.site-header {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  background: rgba(7, 10, 28, .92);
+  border-bottom: var(--px) solid var(--c-border);
+  box-shadow: 0 var(--px) 0 0 var(--c-shadow);
+}
+@supports (backdrop-filter: blur(4px)) {
+  .site-header { background: rgba(7, 10, 28, .78); backdrop-filter: blur(6px); }
+}
+
+.site-header__inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--sp-4);
+  min-height: var(--header-h);
+}
+
+.site-logo {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sp-2);
+  font-family: var(--font-pixel);
+  font-size: var(--fs-lg);
+  color: var(--c-text);
+  text-decoration: none;
+  white-space: nowrap;
+  &:hover { color: var(--c-star); }
+}
+.site-logo__icon { image-rendering: pixelated; }
+.site-logo__dot { color: var(--c-star); }
+
+// ---- Navigation -----------------------------------------------------------
+.site-nav__list {
+  display: flex;
+  gap: var(--sp-2);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.site-nav__link {
+  display: flex;
+  align-items: center;
+  min-height: 44px;
+  padding: var(--sp-1) var(--sp-3);
+  font-family: var(--font-pixel);
+  font-size: var(--fs-sm);
+  color: var(--c-text);
+  text-decoration: none;
+  border: var(--px) solid transparent;
+
+  &:hover {
+    color: var(--c-star);
+    border-color: var(--c-border);
+  }
+
+  &[aria-current] {
+    color: var(--c-space-900);
+    background: var(--c-star);
+    border-color: var(--c-space-900);
+    box-shadow: var(--pixel-shadow);
+  }
+  &--study[aria-current]   { background: var(--c-plasma); }
+  &--reading[aria-current] { background: var(--c-nebula); }
+}
+
+// Hamburger button (only shown on mobile, only after nav.js runs).
+.nav-toggle {
+  display: none;
+  width: 48px;
+  height: 44px;
+  padding: 0;
+  background: var(--c-space-800);
+  border: var(--px) solid var(--c-border);
+  box-shadow: var(--pixel-shadow);
+  color: var(--c-text);
+  cursor: pointer;
+
+  &:active { transform: translate(var(--px), var(--px)); box-shadow: none; }
+}
+.nav-toggle__icon { display: block; margin: 0 auto; }
+.nav-toggle__icon--close { display: none; }
+.nav-toggle[aria-expanded="true"] {
+  color: var(--c-space-900);
+  background: var(--c-star);
+  .nav-toggle__icon--open  { display: none; }
+  .nav-toggle__icon--close { display: block; }
+}
+
+// ---- Footer ---------------------------------------------------------------
+.site-footer {
+  border-top: var(--px) solid var(--c-border);
+  background: rgba(7, 10, 28, .9);
+  font-size: var(--fs-sm);
+  color: var(--c-text-dim);
+}
+.site-footer__inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--sp-3);
+  padding-block: var(--sp-4);
+}
+.site-footer__copy { margin: 0; font-family: var(--font-pixel); }
+.site-footer__links {
+  display: flex;
+  gap: var(--sp-4);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  a { color: var(--c-text-dim); &:hover { color: var(--c-star); } }
+}
+
+// ---- Tablet (768–1023px) --------------------------------------------------
+@include tablet {
+  .site-main { padding-block: var(--sp-5); }
+  .site-nav__list { gap: var(--sp-1); }
+  .site-nav__link { padding-inline: var(--sp-2); }
+}
+
+// ---- Mobile (~767px) ------------------------------------------------------
+@include mobile {
+  .site-main { padding-block: var(--sp-4); }
+  .site-logo { font-size: var(--fs-base); }
+
+  // Once nav.js has run: collapse nav into a dropdown behind the hamburger.
+  .nav-ready {
+    .nav-toggle { display: block; }
+
+    .site-nav {
+      position: absolute;
+      top: 100%;
+      left: 0;
+      right: 0;
+      padding: var(--sp-3) var(--gutter) var(--sp-4);
+      background: var(--c-space-800);
+      border-bottom: var(--px) solid var(--c-border);
+      box-shadow: 0 var(--px) 0 0 var(--c-shadow);
+      display: none;
+    }
+    .site-nav.is-open { display: block; }
+  }
+
+  .site-header__inner { position: relative; }
+  .site-nav__list { flex-direction: column; gap: var(--sp-2); }
+  .site-nav__link { font-size: var(--fs-base); padding-inline: var(--sp-3); }
+
+  // Without JS: nav simply wraps below the logo.
+  html:not(.nav-ready) .site-header__inner { flex-wrap: wrap; padding-block: var(--sp-2); }
+  html:not(.nav-ready) .site-nav__list { flex-direction: row; flex-wrap: wrap; }
+
+  .site-footer__inner { flex-direction: column; align-items: flex-start; }
+}

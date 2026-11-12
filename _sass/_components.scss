@@ -1,0 +1,200 @@
+// ==========================================================================
+// Shared page components: page hero, post list/card, tags, rating, empty.
+// ==========================================================================
+
+// ---- Page hero ------------------------------------------------------------
+.page-hero {
+  --accent: var(--c-star);
+  margin-bottom: var(--sp-5);
+  padding-bottom: var(--sp-4);
+  border-bottom: var(--px) dashed var(--c-border);
+
+  &--study   { --accent: var(--c-plasma); }
+  &--reading { --accent: var(--c-nebula); }
+}
+.page-hero__kicker {
+  margin: 0 0 var(--sp-2);
+  font-family: var(--font-pixel);
+  font-size: var(--fs-xs);
+  letter-spacing: .08em;
+  color: var(--accent);
+}
+.page-hero__title {
+  margin: 0 0 var(--sp-3);
+  font-size: calc(var(--fs-2xl) * 1.25);
+  color: var(--c-text);
+  text-shadow: var(--px) var(--px) 0 var(--c-shadow);
+}
+.page-hero__desc {
+  max-width: 60ch;
+  margin: 0 0 var(--sp-3);
+  color: var(--c-text-dim);
+  font-size: var(--fs-lg);
+}
+.page-hero__count {
+  display: inline-block;
+  margin: 0;
+  padding: 2px var(--sp-2);
+  font-family: var(--font-pixel);
+  font-size: var(--fs-xs);
+  color: var(--c-space-900);
+  background: var(--accent);
+}
+
+// ---- Post groups / list ---------------------------------------------------
+.post-group + .post-group { margin-top: var(--sp-5); }
+.post-group__year {
+  margin: 0 0 var(--sp-3);
+  font-size: var(--fs-lg);
+  color: var(--c-text-dim);
+}
+
+.post-list {
+  display: grid;
+  gap: var(--sp-4);
+}
+
+// ---- Post card ------------------------------------------------------------
+.post-card {
+  --accent: var(--c-star);
+  display: grid;
+  grid-template-columns: 96px 1fr;
+  gap: var(--sp-4);
+  padding: var(--sp-4);
+  background: var(--c-space-800);
+  border: var(--px) solid var(--c-border);
+  box-shadow: var(--pixel-shadow-lg);
+  transition: transform var(--dur-fast) var(--ease-step),
+              border-color var(--dur-fast) var(--ease-step);
+
+  &--study   { --accent: var(--c-plasma); }
+  &--reading { --accent: var(--c-nebula); }
+
+  &:hover,
+  &:focus-within {
+    border-color: var(--accent);
+    transform: translate(-2px, -2px);
+  }
+}
+
+.post-card__date {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  font-family: var(--font-pixel);
+  line-height: 1.2;
+  color: var(--accent);
+  padding-right: var(--sp-3);
+  border-right: var(--px) dotted var(--c-border);
+}
+.post-card__day  { font-size: var(--fs-lg); }
+.post-card__year { font-size: var(--fs-xs); color: var(--c-text-dim); margin-top: var(--sp-1); }
+
+.post-card__body > * + * { margin-top: var(--sp-2); }
+.post-card__body > .pixel-chip + .post-card__title { margin-top: var(--sp-2); }
+
+.post-card__title {
+  margin: 0;
+  font-size: var(--fs-lg);
+  a {
+    color: var(--c-text);
+    text-decoration: none;
+    // whole card is clickable via the title link's ::after
+    &::after { content: ""; position: absolute; inset: 0; }
+    &:hover { color: var(--accent); }
+    &:focus-visible { outline: none; }
+  }
+}
+.post-card { position: relative; }
+.post-card:has(.post-card__title a:focus-visible) {
+  outline: var(--px) solid var(--c-plasma);
+  outline-offset: 2px;
+}
+// Interactive children must sit above the stretched title link.
+.post-card .tag-list { position: relative; z-index: 1; }
+
+.post-card__book {
+  margin: 0;
+  font-size: var(--fs-sm);
+  color: var(--c-text-dim);
+  cite { font-style: normal; color: var(--c-text); }
+}
+.post-card__book-label {
+  font-family: var(--font-pixel);
+  font-size: var(--fs-xs);
+  color: var(--c-nebula);
+}
+.post-card__excerpt {
+  margin: 0;
+  color: var(--c-text-dim);
+  font-size: var(--fs-sm);
+  line-height: 1.7;
+}
+
+// ---- Tag list -------------------------------------------------------------
+.tag-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--sp-2);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+// ---- Pixel rating (5 stars) ----------------------------------------------
+.pixel-rating {
+  display: inline-flex;
+  gap: 2px;
+  margin-left: var(--sp-2);
+  vertical-align: middle;
+}
+.pixel-rating__star {
+  width: 10px;
+  height: 10px;
+  background: var(--c-space-600);
+  // 5-point-ish pixel star via clip-path on a 5x5 grid
+  clip-path: polygon(40% 0, 60% 0, 60% 40%, 100% 40%, 100% 60%, 80% 60%, 80% 100%, 60% 80%, 40% 80%, 20% 100%, 20% 60%, 0 60%, 0 40%, 40% 40%);
+  &.is-on { background: var(--c-star); }
+}
+
+// ---- Empty state ----------------------------------------------------------
+.empty-state {
+  text-align: center;
+  padding: var(--sp-6) var(--sp-4);
+  color: var(--c-text-dim);
+  p { margin: 0; }
+}
+.empty-state__title {
+  font-family: var(--font-pixel);
+  font-size: var(--fs-xl);
+  color: var(--c-star);
+  margin-bottom: var(--sp-3) !important;
+  animation: blink 1.2s steps(2, start) infinite;
+}
+@keyframes blink { 50% { opacity: .35; } }
+
+// ---- Tablet ---------------------------------------------------------------
+@include tablet {
+  .post-card { grid-template-columns: 80px 1fr; gap: var(--sp-3); padding: var(--sp-3); }
+}
+
+// ---- Mobile ---------------------------------------------------------------
+@include mobile {
+  .page-hero__desc { font-size: var(--fs-base); }
+
+  .post-card {
+    grid-template-columns: 1fr;
+    gap: var(--sp-2);
+    box-shadow: var(--pixel-shadow);
+  }
+  .post-card__date {
+    flex-direction: row;
+    gap: var(--sp-2);
+    align-items: baseline;
+    padding: 0 0 var(--sp-2);
+    border-right: 0;
+    border-bottom: 2px dotted var(--c-border);
+  }
+  .post-card__day  { font-size: var(--fs-sm); }
+  .post-card__year { margin: 0; order: -1; } // "2026 04.08"
+}

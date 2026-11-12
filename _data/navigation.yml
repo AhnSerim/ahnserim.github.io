@@ -1,0 +1,14 @@
+# Top navigation. Items with `section` are also marked active on posts
+# whose front matter has the same `section` value.
+- title: Home
+  url: /
+- title: Study
+  url: /study/
+  section: study
+- title: Reading
+  url: /reading/
+  section: reading
+- title: Tags
+  url: /tags/
+- title: About
+  url: /about/
