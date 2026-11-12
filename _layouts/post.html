@@ -1,0 +1,84 @@
+---
+layout: default
+---
+{%- assign nav_item = site.data.navigation | where: "section", page.section | first -%}
+<article class="post post--{{ page.section | default: 'log' }}">
+  <div class="container post__container">
+    <header class="post__header">
+      <nav class="breadcrumb" aria-label="현재 위치">
+        <ol>
+          <li><a href="{{ '/' | relative_url }}">Home</a></li>
+          {%- if nav_item %}
+          <li><a href="{{ nav_item.url | relative_url }}">{{ nav_item.title }}</a></li>
+          {%- endif %}
+        </ol>
+      </nav>
+
+      <h1 class="post__title">{{ page.title | escape }}</h1>
+
+      <p class="post__meta">
+        <time datetime="{{ page.date | date_to_xmlschema }}">{{ page.date | date: '%Y.%m.%d' }}</time>
+        {%- comment -%} ~500 chars/min for Korean prose (Jekyll 3 has no CJK word count) {%- endcomment -%}
+        {%- assign minutes = content | strip_html | strip_newlines | size | divided_by: 500 | plus: 1 %}
+        <span aria-hidden="true">·</span>
+        <span>{{ minutes }}분 읽기</span>
+        {%- if page.section %}
+        <span class="pixel-chip pixel-chip--{{ page.section }}">{{ page.section | capitalize }}</span>
+        {%- endif %}
+      </p>
+
+      {%- if page.book %}
+      <aside class="book-info pixel-box" aria-label="책 정보">
+        <p class="book-info__label">BOOK DATA</p>
+        <dl>
+          <dt>제목</dt><dd><cite>{{ page.book.title | escape }}</cite></dd>
+          {%- if page.book.author %}<dt>저자</dt><dd>{{ page.book.author | escape }}</dd>{% endif %}
+          {%- if page.rating %}
+          <dt>평점</dt>
+          <dd>
+            <span class="pixel-rating" role="img" aria-label="별점 {{ page.rating }}점 (5점 만점)">
+              {%- for i in (1..5) -%}<span class="pixel-rating__star{% if i <= page.rating %} is-on{% endif %}"></span>{%- endfor -%}
+            </span>
+          </dd>
+          {%- endif %}
+        </dl>
+      </aside>
+      {%- endif %}
+    </header>
+
+    <div class="prose">
+      {{ content }}
+    </div>
+
+    <footer class="post__footer">
+      {%- if page.tags.size > 0 %}
+      <ul class="tag-list" aria-label="태그">
+        {%- for tag in page.tags %}
+        <li><a class="pixel-chip" href="{{ '/tags/' | relative_url }}#{{ tag | slugify }}">#{{ tag }}</a></li>
+        {%- endfor %}
+      </ul>
+      {%- endif %}
+
+      {%- if page.previous or page.next %}
+      <nav class="post-pager" aria-label="이전/다음 글">
+        {%- if page.previous %}
+        <a class="post-pager__link post-pager__link--prev" href="{{ page.previous.url | relative_url }}" rel="prev">
+          <span class="post-pager__dir">◀ PREV</span>
+          <span class="post-pager__title">{{ page.previous.title | escape }}</span>
+        </a>
+        {%- endif %}
+        {%- if page.next %}
+        <a class="post-pager__link post-pager__link--next" href="{{ page.next.url | relative_url }}" rel="next">
+          <span class="post-pager__dir">NEXT ▶</span>
+          <span class="post-pager__title">{{ page.next.title | escape }}</span>
+        </a>
+        {%- endif %}
+      </nav>
+      {%- endif %}
+
+      <p class="post__back">
+        <a class="pixel-btn pixel-btn--ghost" href="{{ nav_item.url | default: '/' | relative_url }}">◀ {{ nav_item.title | default: 'Home' }} 목록으로</a>
+      </p>
+    </footer>
+  </div>
+</article>

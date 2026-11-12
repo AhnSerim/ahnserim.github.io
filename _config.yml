@@ -24,7 +24,7 @@ plugins:
 
 defaults:
   - scope: { path: "", type: posts }
-    values: { layout: default }
+    values: { layout: post }
   - scope: { path: "" }
     values: { layout: default }
 
