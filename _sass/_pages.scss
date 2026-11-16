@@ -208,7 +208,9 @@
 // egg's accent, trophy in its own color.
 .hidden-sector__achievement--wish,
 .hidden-sector__achievement--angry,
-.hidden-sector__achievement--alien {
+.hidden-sector__achievement--alien,
+.hidden-sector__achievement--catch,
+.hidden-sector__achievement--perfect {
   --frame-line: var(--achv-accent);
   .hidden-sector__trophy { color: var(--achv-trophy); }
   .hidden-sector__label  { color: var(--achv-accent); }
@@ -224,6 +226,8 @@
 .hidden-sector__achievement--wish  { --achv-accent: var(--c-nebula); --achv-trophy: var(--c-star); }
 .hidden-sector__achievement--alien { --achv-accent: var(--c-plasma); --achv-trophy: var(--c-plasma); }
 .hidden-sector__achievement--angry { --achv-accent: var(--c-nebula); --achv-trophy: var(--c-nebula); }
+.hidden-sector__achievement--catch   { --achv-accent: var(--c-star);   --achv-trophy: var(--c-star); }
+.hidden-sector__achievement--perfect { --achv-accent: var(--c-plasma); --achv-trophy: var(--c-star); }
 .hidden-sector__trophy { flex: 0 0 auto; image-rendering: pixelated; }
 .hidden-sector__label {
   margin: 0 0 var(--sp-2);

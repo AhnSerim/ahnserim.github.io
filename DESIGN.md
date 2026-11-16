@@ -193,8 +193,9 @@ UI는 레트로 게임(부팅 화면, SECTOR, GAME OVER, ◀ PREV / NEXT ▶)의
 | 404 | `404.html` | 큰 핑크 `404` + `GAME OVER` + `▶ CONTINUE` 버튼 |
 | 숨겨진 구역 (이스터에그 1) | `hidden-sector.html` (`/hidden-sector/`), `.hidden-sector` | 배경 우주선을 클릭(또는 코나미 코드)하면 도착. `SECTOR 00 · CLASSIFIED` → `BONUS STAGE`, 착륙장 위에 떠 있는 큰 우주선, `ACHIEVEMENT UNLOCKED` 패널(방문 횟수, localStorage), 유성우 업적(소원 전엔 `LOCKED` 회색 실루엣), `PILOT'S SECRET LOG`. 이 페이지에서는 **모든 이스터에그(우주선·유성우·키 코드)가 꺼짐**(`space-eggs.js` 첫머리에서 종료). 어디에도 링크하지 않고 `noindex`·`sitemap: false` |
 | 유성우 (이스터에그 2) | `assets/js/space-eggs.js`, `_space.scss` | 배경 행성을 클릭·탭(모바일 포함)하거나 `WISH` 입력 → 행성이 4px 흔들리고 픽셀 유성 6개가 우상→좌하로 `steps(12)` 낙하(시작점은 위쪽·오른쪽 변을 잇는 L자를 6칸으로 나눠 칸마다 하나 → 궤적 간격 균등, 순서는 섞음), 행성 위에 오락실 점수처럼 `+1 WISH` / `★ × N` 점수 팝업(`.score-pop--wish`, 노랑·핑크 픽셀 Bold + 하드 그림자)이 튀어 올랐다 사라짐. 스크린리더는 숨은 `role="status"`로 안내. 소원 수는 localStorage `serim.wishes` → 숨겨진 구역 업적 해금. 모션 감소 시 유성 없이 팝업만 제자리에 잠깐 표시 |
+| 유성 잡기 (이스터에그 2-1) | `assets/js/space-eggs.js`, `_space.scss` | 유성우가 내리는 동안 보이는 유성(불투명도 .5 이상)을 클릭·탭하면 잡힘(판정 여유 12px, 터치 20px; 빈 공간 위에서만). 그 자리에서 멈춰 흰 외곽선으로 번쩍 → 머리 위치에서 픽셀 불꽃 8개가 `steps(4)`로 튀고 → 노랑 5×5 십자 별(`.caught-star`, 4px/픽셀)이 `star-pin`(0→2배→1배)으로 하늘에 박혀 근경 별처럼 반짝임. 박힌 별은 localStorage `serim.sky`에 화면 비율 좌표로 최근 12개까지 저장 → 다음 방문에도 하늘에 남음(`.space-bg__caught`, 패럴랙스 없음). 점수 팝업 `+1 CATCH` / `☆ × N`(`.score-pop--catch`, 노랑·시안), 잡은 수 `serim.meteors`. 한 유성우의 6개를 모두 잡으면 마지막 팝업이 `PERFECT!!` / `ALL 6 CAUGHT`(`.score-pop--perfect`, 시안·노랑), `serim.meteors.perfect`. 유성 위 호버 시 노랑 외곽선 + 포인터. 모션 감소 시 유성이 없으므로 잡기도 없음(저장된 별은 정지 상태로 표시) |
 | 엿보는 외계인 (이스터에그 3) | `_includes/study-alien.html` (Study 목록 페이지만, `section.html`), `space-eggs.js`, `_space.scss` | 시안(Study 색) 12×10 픽셀 외계인(더듬이·큰 눈·가장자리를 붙잡은 손, 8px/픽셀, 모바일 4px)이 5–8초 뒤 콘텐츠 폭 안 무작위 위치에서 화면 아래 가장자리로 빼꼼 올라와 2.6초간 눈을 깜빡이다 숨음(10–18초마다 반복, 탭이 숨겨지면 대기). 숨기 전 클릭·탭(= 찌르기)하거나 `ALIEN` 입력 → 머리 위 말풍선 + 깜짝 점프, 찌를 때마다 1.4초 더 머묾. 한 번 등장에 첫 찌르기만 `+1 CONTACT` / `ALIEN × N` 점수 팝업(`.score-pop--alien`, 시안·노랑), localStorage `serim.aliens`. **기분(`data-mood`, 이번 방문의 찌른 횟수)**: 1–4 `startled` `!` → 5–7 `annoyed` `?!`(눈 가늘게) → 8–9 `furious` `!!`(V자 눈썹·찡그린 입, 핑크 말풍선) → 10 `angry` `#@!`(몸이 핑크로, 부들부들 떨림) + 페이지 흔들림 + `ANGRY!!` / `DON'T POKE ME` 팝업(`.score-pop--angry`) → 퇴장 후 이 탭에선 다시 안 나옴(sessionStorage `serim.alien.sulk`, `ALIEN` 입력 시 `STILL ANGRY`). 화난 횟수 localStorage `serim.aliens.angry` → "외교 실패" 업적. 얼굴 레이어는 SVG `<g>`(`__lids`/`__squint`/`__rage`), 피부색은 `.alien__skin` + `--alien-skin`. 모션 감소 시 미끄러짐·점프 없이 나타났다 사라짐 |
-| 숨겨진 구역 업적 | `hidden-sector.html` | 이스터에그별 업적 칸은 `data-unlock`(localStorage 키) + `data-title`/`data-desc`(`{n}` = 횟수)로 선언 → 카운터 > 0이면 해금. 색은 `--achv-accent`/`--achv-trophy` modifier(`--wish` 핑크, `--alien` 시안, `--angry` 핑크) |
+| 숨겨진 구역 업적 | `hidden-sector.html` | 이스터에그별 업적 칸은 `data-unlock`(localStorage 키) + `data-title`/`data-desc`(`{n}` = 횟수)로 선언 → 카운터 > 0이면 해금. 색은 `--achv-accent`/`--achv-trophy` modifier(`--wish` 핑크, `--alien` 시안, `--angry` 핑크, `--catch` 노랑 "별 사냥꾼", `--perfect` 시안 "퍼펙트 캐치") |
 | 푸터 | `_includes/footer.html` | 픽셀 캐럿 + ©, GitHub · `맨 위로 ▲` |
 
 ---
@@ -218,6 +219,8 @@ UI는 레트로 게임(부팅 화면, SECTOR, GAME OVER, ◀ PREV / NEXT ▶)의
 | `warp-flash` | 이스터에그 진입 화면 번쩍임 | .6s `steps(6)` (우주선은 WAAPI로 `steps(6)` 발진) |
 | `hover-bob` | 숨겨진 구역의 우주선 | 1.6s `steps(2)` alternate, 8px |
 | `meteor` | 유성우 유성 | 0.9–1.5s WAAPI `steps(12)`, 240ms 간격 순차 |
+| `meteor-burst` | 잡힌 유성의 불꽃 8개 | .4s `steps(4)`, 20–28px 방사 |
+| `star-pin` | 잡은 유성이 하늘에 박힘 | .48s `steps(4)` 0→2배→1배, 이후 `twinkle` |
 | `score-pop` | 이스터에그 점수 팝업 (유성우·외계인) | 1.6s `steps(8)` — 40px 튀어 오름 → 24px로 내려앉음 → 64px까지 떠오르며 사라짐 |
 | 외계인 등장/퇴장 | 엿보는 외계인 | `transform` 400ms `steps(4)` 트랜지션 (화면 아래 → 가장자리) |
 | `alien-blink` | 외계인 눈 | 2.6s `steps(1)` 무한 |
@@ -288,7 +291,7 @@ assets/css/giscus.css giscus iframe용 테마 (Sass 미처리, 토큰 값 수동
 assets/js/nav.js      모바일 햄버거 메뉴
 assets/js/scroll-fx.js 스크롤 효과
 assets/js/typing.js    홈 히어로 타이핑 인트로
-assets/js/space-eggs.js 이스터에그 (우주선 클릭 / 코나미 코드 → /hidden-sector/, 행성 클릭 / WISH → 유성우, Study 외계인 클릭 / ALIEN → 접촉)
+assets/js/space-eggs.js 이스터에그 (우주선 클릭 / 코나미 코드 → /hidden-sector/, 행성 클릭 / WISH → 유성우, 유성 클릭 → 잡아서 하늘에 별로, Study 외계인 클릭 / ALIEN → 접촉)
 _includes/study-alien.html 엿보는 외계인 스프라이트 (Study 목록에서만 include)
 ```
 
@@ -310,3 +313,4 @@ _includes/study-alien.html 엿보는 외계인 스프라이트 (Study 목록에�
 | 2026-11-12 | 포스트 명패에 글 태그(최대 3개, 링크) 표시. 숨겨진 구역에서는 모든 이스터에그 비활성. UI 문구를 합쇼체(~습니다/~입니다)로 통일, 카피 보이스 규칙 갱신 |
 | 2026-11-12 | 퀘스트 로그 창 안쪽 선을 섹션색 → `--c-space-600`으로 낮추고, 섹션색은 모서리 12px 브래킷에만 사용(눈부심 완화) |
 | 2026-11-12 | 홈 히어로에 터미널 타이핑 인트로 추가(`typing.js`, `.fx-type`, 세션당 1회) |
+| 2026-11-16 | 이스터에그 2-1 — 유성우의 유성을 클릭·탭해 잡기: 불꽃 + 하늘에 별로 남음(`serim.sky`), 6개 전부 잡으면 PERFECT. `.score-pop--{catch,perfect}`, 숨겨진 구역 업적 "별 사냥꾼"·"퍼펙트 캐치" |

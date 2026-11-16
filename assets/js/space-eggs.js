@@ -5,6 +5,9 @@
 //  2. Meteor shower — poke the planet (click/tap, or type "wish") and a
 //     shower of pixel meteors rains down; each one counts as a wish
 //     (localStorage), shown as an achievement in the hidden sector.
+//     Click/tap a falling meteor to catch it: it bursts into sparks and
+//     stays pinned in the sky as a new star (kept across visits). Catch all
+//     six of one shower for a PERFECT bonus.
 //  3. Peeking alien (Study page only, `[data-alien]`) — a little alien
 //     peeks up from the bottom edge now and then; click/tap it before it
 //     ducks (or type "alien") to make contact. Counted like wishes. Poke it
@@ -27,6 +30,10 @@
                  '[role="button"], .post-card, .sector, .pixel-box, .post__sheet, .site-header, .site-footer, .alien';
   var WISH_KEY = 'serim.wishes';
   var ALIEN_KEY = 'serim.aliens';
+  var CATCH_KEY = 'serim.meteors';          // meteors caught
+  var PERFECT_KEY = 'serim.meteors.perfect'; // showers fully caught
+  var SKY_KEY = 'serim.sky';                // pinned stars [[fx, fy], …]
+  var SKY_MAX = 12;
   var alien = document.querySelector('[data-alien]');
 
   // ---- Targets -------------------------------------------------------------
@@ -40,6 +47,8 @@
 
   function eggAt(x, y, el) {
     if (el && el.closest && el.closest(BLOCKERS)) return null;
+    var m = meteorAt(x, y);
+    if (m) return m;
     for (var i = 0; i < eggs.length; i++) {
       var r = eggs[i].el.getBoundingClientRect(), s = eggs[i].slack;
       // a few px of slack so a moving target is fair game
@@ -56,7 +65,8 @@
   // ---- Hover: highlight the target + pointer cursor (one check per frame)
   var hovered = null, lastX = -1, lastY = -1, lastEl = null, queued = false;
   function setHover(egg) {
-    if (egg === hovered) return;
+    // meteorAt() hands out a fresh object per check: compare the element
+    if (egg === hovered || (egg && hovered && egg.el === hovered.el)) return;
     hovered = egg;
     root.classList.toggle('egg-hover', !!egg);
     if (egg) root.setAttribute('data-egg-hover', egg.name);
@@ -155,6 +165,10 @@
     '<rect x="2" y="6" width="1" height="1" fill="#ffe066"/></svg>';
   var COUNT = 6;
   var showering = false;
+  var falling = [];     // catchable meteors of the current shower
+  var caught = 0;       // caught in the current shower
+  // fingers are blunter than a mouse pointer: a bit more slack on touch
+  var CATCH_SLACK = matchMedia('(pointer: coarse)').matches ? 20 : 12;
 
   // +1 on a localStorage counter; 0 when storage is blocked.
   function bump(key) {
@@ -184,6 +198,8 @@
       var layer = document.createElement('div');
       layer.className = 'meteor-shower';
       bg.appendChild(layer);
+      falling = [];
+      caught = 0;
 
       // Even spread: meteors start on an L along the top edge (from 20% of
       // the width) and down the right edge (to 60% of the height). For a
@@ -206,6 +222,7 @@
         m.style.left = x + 'px';
         m.style.top = y + 'px';
         layer.appendChild(m);
+        falling.push(m);
         m.animate(
           // invisible until its delay is up (fill: both keeps frame 0)
           [{ transform: 'translate(0, 0)', opacity: 0 },
@@ -216,7 +233,7 @@
         );
         longest = Math.max(longest, delay + dur);
       }
-      setTimeout(function () { layer.remove(); }, longest + 100);
+      setTimeout(function () { layer.remove(); falling = []; }, longest + 100);
     }
 
     var pr = planet ? planet.getBoundingClientRect() : null;
@@ -230,6 +247,106 @@
     announce('유성우가 떨어집니다. 소원이 하나 늘었습니다.' + (wishes ? ' 지금까지 ' + wishes + '개입니다.' : ''));
     setTimeout(function () { showering = false; }, Math.max(longest, 1600));
   }
+
+  // ---- Catching a meteor --------------------------------------------------
+  // A meteor is fair game while it's visible (not waiting on its delay,
+  // not fading out at the end of its fall).
+  function meteorAt(x, y) {
+    for (var i = 0; i < falling.length; i++) {
+      var m = falling[i];
+      if (parseFloat(getComputedStyle(m).opacity) < .5) continue;
+      var r = m.getBoundingClientRect(), s = CATCH_SLACK;
+      if (x >= r.left - s && x <= r.right + s && y >= r.top - s && y <= r.bottom + s) {
+        return { name: 'meteor', el: m, run: catchMeteor.bind(null, m) };
+      }
+    }
+    return null;
+  }
+
+  function catchMeteor(m) {
+    var i = falling.indexOf(m);
+    if (i < 0) return;
+    falling.splice(i, 1);
+    setHover(null);
+    // freeze it mid-fall, flash, and burst
+    m.getAnimations().forEach(function (a) { a.pause(); });
+    m.classList.add('is-caught');
+    var r = m.getBoundingClientRect();
+    // the meteor's head is its bottom-left 2×2 block
+    var x = snap(r.left + 4), y = snap(r.bottom - 4);
+    burst(x, y);
+    setTimeout(function () { m.remove(); }, 120);
+    pinStar(x, y, true);
+
+    caught++;
+    var n = bump(CATCH_KEY);
+    if (caught === COUNT) {
+      var p = bump(PERFECT_KEY);
+      scorePop({ kind: 'perfect', x: x, y: y - 40, score: 'PERFECT!!', total: 'ALL ' + COUNT + ' CAUGHT' });
+      announce('유성 ' + COUNT + '개를 모두 잡았습니다. 퍼펙트입니다!' + (p ? ' 지금까지 ' + p + '번 성공했습니다.' : ''));
+      return;
+    }
+    scorePop({ kind: 'catch', x: x, y: y - 40, score: '+1 CATCH', total: n ? '☆ × ' + n : '' });
+    announce('유성을 잡았습니다. 하늘에 별이 하나 생겼습니다.' + (n ? ' 지금까지 ' + n + '개를 잡았습니다.' : ''));
+  }
+
+  // 8 pixel sparks flying out from (x, y).
+  function burst(x, y) {
+    var b = document.createElement('div');
+    b.className = 'meteor-burst';
+    b.style.left = x + 'px';
+    b.style.top = y + 'px';
+    for (var k = 0; k < 8; k++) {
+      var a = k * Math.PI / 4, d = k % 2 ? 20 : 28;
+      var s = document.createElement('i');
+      s.style.setProperty('--dx', snap(Math.cos(a) * d) + 'px');
+      s.style.setProperty('--dy', snap(Math.sin(a) * d) + 'px');
+      b.appendChild(s);
+    }
+    bg.appendChild(b);
+    setTimeout(function () { b.remove(); }, 500);
+  }
+
+  // ---- The sky: caught meteors stay on as stars ------------------------------
+  var STAR_SVG =
+    '<svg viewBox="0 0 5 5" width="20" height="20" shape-rendering="crispEdges">' +
+    '<rect x="2" y="0" width="1" height="5" fill="#ffe066"/>' +
+    '<rect x="0" y="2" width="5" height="1" fill="#ffe066"/>' +
+    '<rect x="2" y="2" width="1" height="1" fill="#e8ebff"/></svg>';
+  var sky = null;
+
+  function readSky() {
+    try {
+      var a = JSON.parse(localStorage.getItem(SKY_KEY) || '[]');
+      return Array.isArray(a) ? a : [];
+    } catch (e) { return []; }
+  }
+
+  // Pin a star at (x, y) px; saved as viewport fractions so it survives
+  // resizes. Only the newest SKY_MAX stars are kept.
+  function pinStar(x, y, fresh) {
+    if (!sky) {
+      sky = document.createElement('div');
+      sky.className = 'space-bg__caught';
+      bg.appendChild(sky);
+    }
+    var st = document.createElement('span');
+    st.className = 'caught-star' + (fresh ? ' is-new' : '');
+    st.innerHTML = STAR_SVG;
+    st.style.left = (x / innerWidth * 100).toFixed(2) + '%';
+    st.style.top = (y / innerHeight * 100).toFixed(2) + '%';
+    st.style.animationDelay = fresh ? '' : -Math.round(Math.random() * 4000) + 'ms';
+    sky.appendChild(st);
+    while (sky.children.length > SKY_MAX) sky.removeChild(sky.firstChild);
+    if (!fresh) return;
+    var saved = readSky();
+    saved.push([+(x / innerWidth).toFixed(3), +(y / innerHeight).toFixed(3)]);
+    try { localStorage.setItem(SKY_KEY, JSON.stringify(saved.slice(-SKY_MAX))); } catch (e) {}
+  }
+
+  readSky().forEach(function (p) {
+    if (p && isFinite(p[0]) && isFinite(p[1])) pinStar(p[0] * innerWidth, p[1] * innerHeight, false);
+  });
 
   // ==========================================================================
   // 3. Peeking alien (Study page)

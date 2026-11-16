@@ -91,6 +91,51 @@ $stars-near: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' w
   will-change: transform, opacity;
   svg { display: block; image-rendering: pixelated; }
 }
+// Caught! It freezes mid-fall and flashes white for a beat (then removed).
+.meteor.is-caught { @include egg-outline(var(--c-text)); }
+[data-egg-hover="meteor"] .meteor { @include egg-outline(var(--c-star)); }
+
+// 8 pixel sparks flying out of the catch point (--dx/--dy set by the JS).
+.meteor-burst {
+  position: absolute;
+  width: 0;
+  height: 0;
+  i {
+    position: absolute;
+    left: calc(var(--sp-1) / -2);   // centered on the catch point
+    top: calc(var(--sp-1) / -2);
+    width: var(--sp-1);
+    height: var(--sp-1);
+    background: var(--c-star);
+    animation: meteor-burst .4s steps(4, end) forwards;
+    &:nth-child(even) { background: var(--c-text); }
+  }
+}
+@keyframes meteor-burst {
+  0%   { opacity: 1; transform: translate(0, 0); }
+  100% { opacity: 0; transform: translate(var(--dx), var(--dy)); }
+}
+
+// Caught meteors stay in the sky as stars (positions in localStorage).
+.space-bg__caught {
+  position: absolute;
+  inset: 0;
+}
+.caught-star {
+  position: absolute;
+  display: block;
+  width: 20px;
+  height: 20px;
+  margin: calc(var(--sp-2) * -1) 0 0 calc(var(--sp-2) * -1);
+  animation: twinkle 4s steps(4, end) infinite alternate;
+  svg { display: block; image-rendering: pixelated; }
+  &.is-new { animation: star-pin .48s steps(4, end), twinkle 4s steps(4, end) .48s infinite alternate; }
+}
+@keyframes star-pin {
+  0%  { opacity: 0; transform: scale(0); }
+  50% { opacity: 1; transform: scale(2); }
+  100% { transform: scale(1); }
+}
 
 // Arcade score popup ("+1 WISH" over the planet, "+1 CONTACT" over the
 // alien): hops up, hangs, fades out. Colors per kind via --pop-main/--pop-sub.
@@ -116,6 +161,8 @@ $stars-near: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' w
 .score-pop--wish  { --pop-main: var(--c-star);   --pop-sub: var(--c-nebula); }
 .score-pop--alien { --pop-main: var(--c-plasma); --pop-sub: var(--c-star); }
 .score-pop--angry { --pop-main: var(--c-nebula); --pop-sub: var(--c-text); }
+.score-pop--catch   { --pop-main: var(--c-star);   --pop-sub: var(--c-plasma); }
+.score-pop--perfect { --pop-main: var(--c-plasma); --pop-sub: var(--c-star); }
 
 @keyframes score-pop {
   0%   { opacity: 0; transform: translate(-50%, 0); }
@@ -159,7 +206,8 @@ $stars-near: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' w
 
 // Reduced motion: keep the stars, drop the movement.
 @media (prefers-reduced-motion: reduce) {
-  .space-bg__stars--near, .space-bg__ship, .space-bg__flame { animation: none; }
+  .space-bg__stars--near, .space-bg__ship, .space-bg__flame,
+  .caught-star, .caught-star.is-new { animation: none; }
   .score-pop { animation: score-pop-still 1.6s steps(1, end) forwards; }
   .space-bg__ship { left: auto; right: 12vw; }
 }
