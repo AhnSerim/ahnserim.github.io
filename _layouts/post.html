@@ -71,14 +71,6 @@ layout: default
       </ul>
       {%- endif %}
 
-      {%- unless page.comments == false %}
-      <section class="post-comments" aria-labelledby="post-comments-title" data-reveal>
-        <h2 class="post-comments__title" id="post-comments-title">TRANSMISSIONS · 댓글</h2>
-        <p class="post-comments__desc">GitHub 계정으로 로그인하면 이 글에 신호를 남길 수 있습니다.</p>
-        {% include giscus.html mapping="pathname" %}
-      </section>
-      {%- endunless %}
-
       {%- if page.previous or page.next %}
       <nav class="post-pager" aria-label="이전/다음 글" data-reveal>
         {%- if page.previous %}

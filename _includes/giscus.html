@@ -2,15 +2,8 @@
   giscus comment widget (GitHub Discussions). Settings live in _config.yml
   under `giscus:`. The pixel theme is assets/css/giscus.css; it must be an
   absolute URL because giscus loads it inside its own iframe.
-
-  Params:
-    mapping — "specific" (default): one shared thread named by `term` (guestbook)
-              "pathname": one thread per page (post comments)
-    term    — thread name for mapping=specific (default: site.giscus.term)
 {%- endcomment -%}
 {%- assign g = site.giscus -%}
-{%- assign mapping = include.mapping | default: "specific" -%}
-{%- if mapping == "specific" -%}{%- assign what = "방명록" -%}{%- else -%}{%- assign what = "댓글" -%}{%- endif -%}
 {%- if g.repo_id and g.category_id and g.category_id != "" %}
 <div class="giscus"></div>
 <script src="https://giscus.app/client.js"
@@ -18,10 +11,8 @@
   data-repo-id="{{ g.repo_id }}"
   data-category="{{ g.category }}"
   data-category-id="{{ g.category_id }}"
-  data-mapping="{{ mapping }}"
-  {%- if mapping == "specific" %}
-  data-term="{{ include.term | default: g.term | default: 'guestbook' }}"
-  {%- endif %}
+  data-mapping="specific"
+  data-term="{{ g.term | default: 'guestbook' }}"
   data-strict="1"
   data-reactions-enabled="1"
   data-emit-metadata="0"
@@ -31,10 +22,10 @@
   data-loading="lazy"
   crossorigin="anonymous"
   async></script>
-<noscript><p class="empty-state">{{ what }}을 보려면 JavaScript를 켜 주십시오.</p></noscript>
+<noscript><p class="empty-state">방명록을 보려면 JavaScript를 켜 주십시오.</p></noscript>
 {%- else %}
 <div class="empty-state pixel-box">
   <p class="empty-state__title">SIGNAL OFFLINE</p>
-  <p>{{ what }} 수신기를 준비하고 있습니다. 곧 신호를 받을 수 있습니다.</p>
+  <p>방명록 수신기를 준비하고 있습니다. 곧 신호를 받을 수 있습니다.</p>
 </div>
 {%- endif %}

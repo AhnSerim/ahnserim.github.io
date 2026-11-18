@@ -160,26 +160,6 @@ $sheet-pad: calc(var(--sp-5) + var(--px));   // padding + 4px outline
   > * + * { margin-top: var(--sp-4); }
 }
 
-// Comments: giscus, one Discussions thread per post pathname.
-.post-comments {
-  padding-top: var(--sp-4);
-  border-top: var(--px) dashed var(--c-border);
-  .giscus { min-height: 160px; } // reserve room while the iframe loads
-}
-.post-comments__title {
-  margin: 0 0 var(--sp-2);
-  font-family: var(--font-pixel);
-  font-size: var(--fs-xs);
-  font-weight: 400;
-  letter-spacing: .08em;
-  color: var(--accent);
-}
-.post-comments__desc {
-  margin: 0 0 var(--sp-4);
-  font-size: var(--fs-sm);
-  color: var(--c-text-dim);
-}
-
 .post-pager {
   display: grid;
   grid-template-columns: 1fr 1fr;
