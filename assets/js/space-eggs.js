@@ -415,9 +415,13 @@
   var shower = activeShower();
   var strayLayer = null;
 
+  // Just the meteor icon; the text opens on hover / focus / tap. It rides
+  // above the footer when that scrolls into view so it never covers it.
   function showHud() {
-    var hud = document.createElement('p');
+    var hud = document.createElement('button');
+    hud.type = 'button';
     hud.className = 'shower-hud';
+    hud.setAttribute('aria-expanded', 'false');
     var when = shower.diff === 0 ? 'TONIGHT' : (shower.diff < 0 ? 'D' + shower.diff : 'D+' + shower.diff);
     hud.innerHTML =
       '<span class="shower-hud__icon" aria-hidden="true">' + METEOR_SVG + '</span>' +
@@ -427,8 +431,21 @@
       '</span>';
     hud.setAttribute('aria-label', '지금은 ' + shower.name + ' 유성우 기간입니다. 하늘에 유성이 가끔 떨어집니다.');
     document.body.appendChild(hud);
-    // tell, then fold down to just the icon so it never sits on the text
-    setTimeout(function () { hud.classList.add('is-folded'); }, 8000);
+    // touch has no hover: a tap toggles it
+    hud.addEventListener('click', function () {
+      var open = hud.classList.toggle('is-open');
+      hud.setAttribute('aria-expanded', open ? 'true' : 'false');
+    });
+
+    // (scroll fires at most once a frame; one rect read is cheap)
+    var footer = document.querySelector('.site-footer');
+    function lift() {
+      var top = footer ? footer.getBoundingClientRect().top : innerHeight;
+      hud.style.bottom = Math.max(16, snap(innerHeight - top + 16)) + 'px';
+    }
+    addEventListener('scroll', lift, { passive: true });
+    addEventListener('resize', lift);
+    lift();
   }
 
   function scheduleStray() {

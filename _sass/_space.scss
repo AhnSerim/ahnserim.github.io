@@ -313,8 +313,9 @@ $stars-near: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' w
 }
 
 // ---- Real meteor shower HUD (space-eggs.js, around a real shower's peak) ---
-// A small HUD tag in the bottom-left corner names the shower; after 8s it
-// folds down to just the meteor icon. Never takes clicks.
+// A meteor icon button in the bottom-left corner; hover / focus / tap
+// (.is-open) unfolds the shower name. space-eggs.js lifts it above the
+// footer when the footer is on screen.
 .shower-hud {
   position: fixed;
   left: var(--sp-3);
@@ -328,17 +329,24 @@ $stars-near: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' w
   border: var(--px) solid var(--c-border);
   background: var(--c-space-800);
   box-shadow: var(--pixel-shadow);
+  font: inherit;
   font-family: var(--font-pixel);
   line-height: 1;
-  pointer-events: none;
-  animation: pixel-rise var(--dur-reveal) var(--ease-reveal) both;
+  text-align: left;
+  color: inherit;
+  cursor: pointer;
+  opacity: .7;
+  animation: pixel-rise var(--dur-reveal) var(--ease-reveal) backwards;
+  &:hover, &:focus-visible, &.is-open {
+    opacity: 1;
+    border-color: var(--c-star);
+    .shower-hud__text { display: flex; }
+  }
 }
 .shower-hud__icon svg { display: block; width: 24px; height: 24px; image-rendering: pixelated; }
-.shower-hud__text { display: flex; flex-direction: column; gap: var(--sp-1); }
+.shower-hud__text { display: none; flex-direction: column; gap: var(--sp-1); }
 .shower-hud__name { font-size: var(--fs-xs); color: var(--c-star); }
 .shower-hud__peak { font-size: var(--fs-xs); color: var(--c-text-dim); }
-.shower-hud.is-folded .shower-hud__text { display: none; }
-.shower-hud.is-folded { opacity: .7; }
 
 // ---- Bookworm (Reading page, _includes/reading-worm.html) ----------------
 // Absolutely positioned in page coordinates on a card's top edge. The
