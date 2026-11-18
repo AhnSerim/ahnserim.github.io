@@ -118,6 +118,65 @@ main *::after { border-radius: 0 !important; }
   box-shadow: none !important;
 }
 
+/* ---- Replies (대댓글) ------------------------------------------------------
+   GitHub Discussions allows one level of replies. They sit on a darker strip
+   under the message, indented behind a nebula bar like a blockquote, each
+   marked with a pixel ↳. The "write a reply" prompt is a dashed slot with
+   a ▶ cursor so it reads as something to press. */
+.gsc-replies {
+  background: #070a1c !important;
+  border-top: 2px solid #26306a !important;
+  padding: 8px 0 4px;
+}
+.gsc-tl-line { display: none; }              /* replaced by the bar below */
+.gsc-reply {
+  position: relative;
+  margin: 0 16px 8px 40px;
+  padding: 4px 0 4px 12px;
+  border-left: 4px solid #ff7ad9;
+}
+.gsc-reply::before {
+  content: "↳";
+  position: absolute;
+  left: -28px;
+  top: 6px;
+  font-family: "Galmuri11", "DungGeunMo", "Courier New", monospace;
+  color: #ff7ad9;
+  line-height: 1;
+}
+.gsc-reply + .gsc-reply { border-top: 2px dashed #26306a; padding-top: 12px; }
+.gsc-reply + .gsc-reply::before { top: 14px; }
+.gsc-reply-author,
+.gsc-reply-header time,
+.gsc-comment-replies-count {
+  font-family: "Galmuri11", "DungGeunMo", "Courier New", monospace !important;
+  font-weight: 400 !important;
+}
+.gsc-comment-replies-count { color: #ff7ad9; }
+
+.gsc-reply-box {
+  background: #070a1c !important;
+  border-top: 2px solid #26306a;
+}
+.gsc-reply-box .form-control {
+  border: 2px dashed #5a6bd0 !important;
+  background: #0e1433 !important;
+  color: #a9b0d6 !important;
+  font-family: "Galmuri11", "DungGeunMo", "Courier New", monospace;
+  padding: 8px 12px !important;
+  cursor: pointer !important;
+}
+.gsc-reply-box .form-control::before { content: "▶ "; color: #ffe066; }
+.gsc-reply-box .form-control:hover {
+  border-color: #ffe066 !important;
+  color: #e8ebff !important;
+}
+/* The opened reply form: frame in nebula so it's clear what it answers. */
+.gsc-comment-box-is-reply {
+  border-color: #ff7ad9 !important;
+  box-shadow: none;
+}
+
 :focus-visible {
   outline: 4px solid #5ef0ff !important;
   outline-offset: 2px;
