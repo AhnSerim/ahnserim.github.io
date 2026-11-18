@@ -6,7 +6,7 @@
 //     shower of pixel meteors rains down; each one counts as a wish
 //     (localStorage), shown as an achievement in the hidden sector.
 //     Click/tap a falling meteor to catch it: it bursts into sparks and
-//     stays pinned in the sky as a new star (kept across visits). Catch all
+//     stays pinned in the sky as a new star (this page view). Catch all
 //     six of one shower for a PERFECT bonus.
 //     On the nights around a real meteor shower's peak (Perseids, Geminids…)
 //     a HUD tag names it and stray meteors fall by themselves now and then;
@@ -39,7 +39,7 @@
   var ALIEN_KEY = 'serim.aliens';
   var CATCH_KEY = 'serim.meteors';          // meteors caught
   var PERFECT_KEY = 'serim.meteors.perfect'; // showers fully caught
-  var SKY_KEY = 'serim.sky';                // pinned stars [[fx, fy], …]
+  var OLD_SKY_KEY = 'serim.sky';            // no longer used (cleared)
   var SKY_MAX = 12;
   var SHOWERS_KEY = 'serim.showers';         // real showers logged (count)
   var SHOWERS_SEEN_KEY = 'serim.showers.seen'; // ["geminids-2026", …]
@@ -302,7 +302,7 @@
     var x = snap(r.left + 4), y = snap(r.bottom - 4);
     burst(x, y);
     setTimeout(function () { m.remove(); }, 120);
-    pinStar(x, y, true);
+    pinStar(x, y);
 
     var n = bump(CATCH_KEY);
     if (m.hasAttribute('data-stray')) { catchStray(x, y, n); return; }
@@ -342,42 +342,31 @@
     '<rect x="2" y="2" width="1" height="1" fill="#e8ebff"/></svg>';
   var sky = null;
 
-  function readSky() {
-    try {
-      var a = JSON.parse(localStorage.getItem(SKY_KEY) || '[]');
-      return Array.isArray(a) ? a : [];
-    } catch (e) { return []; }
-  }
-
-  // Pin a star at (x, y) px; saved as viewport fractions so it survives
-  // resizes. Only the newest SKY_MAX stars are kept.
-  function pinStar(x, y, fresh) {
+  // Pin a star at (x, y) px (as viewport %, so it follows resizes). It lives
+  // only for this page view: a reload or the next page starts a clean sky.
+  // Only the newest SKY_MAX stay up.
+  function pinStar(x, y) {
     if (!sky) {
       sky = document.createElement('div');
       sky.className = 'space-bg__caught';
       bg.appendChild(sky);
     }
     var st = document.createElement('span');
-    st.className = 'caught-star' + (fresh ? ' is-new' : '');
+    st.className = 'caught-star is-new';
     st.innerHTML = STAR_SVG;
     st.style.left = (x / innerWidth * 100).toFixed(2) + '%';
     st.style.top = (y / innerHeight * 100).toFixed(2) + '%';
-    st.style.animationDelay = fresh ? '' : -Math.round(Math.random() * 4000) + 'ms';
     sky.appendChild(st);
     while (sky.children.length > SKY_MAX) sky.removeChild(sky.firstChild);
-    if (!fresh) return;
-    var saved = readSky();
-    saved.push([+(x / innerWidth).toFixed(3), +(y / innerHeight).toFixed(3)]);
-    try { localStorage.setItem(SKY_KEY, JSON.stringify(saved.slice(-SKY_MAX))); } catch (e) {}
   }
 
-  readSky().forEach(function (p) {
-    if (p && isFinite(p[0]) && isFinite(p[1])) pinStar(p[0] * innerWidth, p[1] * innerHeight, false);
-  });
+  // Earlier versions saved the pinned stars across visits: drop them.
+  try { localStorage.removeItem(OLD_SKY_KEY); } catch (e) {}
 
   // ---- Real meteor showers ---------------------------------------------------
   // On the nights around a real shower's peak (visitor's local date), a HUD
-  // tag names it and stray meteors fall on their own every few seconds.
+  // tag names it (home page only) and stray meteors fall on their own
+  // every few seconds (every page).
   // Catching one logs that shower (once per shower per year).
   // Preview any of them with ?shower=<id>, e.g. ?shower=geminids.
   var SHOWERS = [ // id, HUD name, peak month, peak day (typical dates)
@@ -482,7 +471,7 @@
   }
 
   if (shower) {
-    showHud();
+    if (document.querySelector('.home-hero')) showHud(); // the HUD tag: home page only
     if (!reduce.matches && document.body.animate) scheduleStray();
   }
 
