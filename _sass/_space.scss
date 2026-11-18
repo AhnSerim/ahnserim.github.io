@@ -163,6 +163,9 @@ $stars-near: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' w
 .score-pop--angry { --pop-main: var(--c-nebula); --pop-sub: var(--c-text); }
 .score-pop--catch   { --pop-main: var(--c-star);   --pop-sub: var(--c-plasma); }
 .score-pop--perfect { --pop-main: var(--c-plasma); --pop-sub: var(--c-star); }
+.score-pop--observe { --pop-main: var(--c-star);   --pop-sub: var(--c-text); }
+.score-pop--worm      { --pop-main: var(--c-nebula); --pop-sub: var(--c-star); }
+.score-pop--butterfly { --pop-main: var(--c-nebula); --pop-sub: var(--c-plasma); }
 
 @keyframes score-pop {
   0%   { opacity: 0; transform: translate(-50%, 0); }
@@ -307,4 +310,114 @@ $stars-near: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' w
   .alien { transition: none; }
   .alien__lids, .alien.is-caught .alien__sprite,
   .alien[data-mood="angry"] .alien__sprite { animation: none; }
+}
+
+// ---- Real meteor shower HUD (space-eggs.js, around a real shower's peak) ---
+// A small HUD tag in the bottom-left corner names the shower; after 8s it
+// folds down to just the meteor icon. Never takes clicks.
+.shower-hud {
+  position: fixed;
+  left: var(--sp-3);
+  bottom: var(--sp-3);
+  z-index: 30;                 // below the alien / header
+  display: flex;
+  align-items: center;
+  gap: var(--sp-2);
+  margin: 0;
+  padding: var(--sp-2);
+  border: var(--px) solid var(--c-border);
+  background: var(--c-space-800);
+  box-shadow: var(--pixel-shadow);
+  font-family: var(--font-pixel);
+  line-height: 1;
+  pointer-events: none;
+  animation: pixel-rise var(--dur-reveal) var(--ease-reveal) both;
+}
+.shower-hud__icon svg { display: block; width: 24px; height: 24px; image-rendering: pixelated; }
+.shower-hud__text { display: flex; flex-direction: column; gap: var(--sp-1); }
+.shower-hud__name { font-size: var(--fs-xs); color: var(--c-star); }
+.shower-hud__peak { font-size: var(--fs-xs); color: var(--c-text-dim); }
+.shower-hud.is-folded .shower-hud__text { display: none; }
+.shower-hud.is-folded { opacity: .7; }
+
+// ---- Bookworm (Reading page, _includes/reading-worm.html) ----------------
+// Absolutely positioned in page coordinates on a card's top edge. The
+// sprite sits in .worm__hole (overflow hidden) one sprite-height below it,
+// so .is-up slides it up out of the card in 4 steps — and back in. The
+// sprite's own --w/--h (sprite pixels) set its size at --worm-px per pixel.
+.worm {
+  --worm-px: 8px;
+  position: absolute;
+  z-index: 40;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  &:hover .worm__hole { @include egg-outline(var(--c-star)); }
+}
+.worm__hole { display: block; overflow: hidden; }
+.worm__sprite {
+  display: block;
+  width: calc(var(--w) * var(--worm-px));
+  height: calc(var(--h) * var(--worm-px));
+  image-rendering: pixelated;
+  transform: translateY(100%);
+  transition: transform 400ms steps(4, end);
+}
+.worm.is-up .worm__sprite { transform: none; }
+// body wave: every other segment hops up one sprite pixel (SVG units)
+.worm__seg { animation: worm-wiggle .6s steps(1, end) infinite; }
+.worm__seg:nth-of-type(even) { animation-delay: -.3s; }
+.worm__alert {
+  position: absolute;
+  right: 0;
+  bottom: 100%;
+  font-family: var(--font-pixel);
+  font-weight: 700;
+  font-size: var(--fs-lg);
+  line-height: 1;
+  color: var(--c-nebula);
+  text-shadow: var(--px) var(--px) 0 var(--c-shadow);
+  white-space: nowrap;
+  opacity: 0;
+}
+.worm.is-fed {
+  .worm__alert  { opacity: 1; }
+  .worm__sprite { animation: worm-munch .32s steps(2, end) 2; }
+}
+.worm.is-cocoon .worm__sprite { animation: alien-rage .24s steps(2, end) infinite; }
+
+// The butterfly it turns into: flies up off screen (moved by WAAPI).
+.butterfly {
+  position: fixed;
+  z-index: 150;
+  width: 56px;                 // 7×6 sprite at 8px per pixel
+  height: 48px;
+  pointer-events: none;
+  svg { display: block; width: 100%; height: 100%; image-rendering: pixelated; }
+}
+.butterfly__wing {
+  transform-box: fill-box;
+  transform-origin: right center;
+  animation: butterfly-flap .24s steps(1, end) infinite;
+}
+.butterfly__wing--r { transform-origin: left center; }
+
+@keyframes worm-wiggle {
+  0%  { transform: none; }
+  50% { transform: translateY(-1px); }
+}
+@keyframes worm-munch {
+  50% { transform: translateY(calc(var(--px) * -1)); }
+}
+@keyframes butterfly-flap {
+  50% { transform: scaleX(.34); }
+}
+
+@include mobile {
+  .worm { --worm-px: 4px; }
+  .worm__alert { font-size: var(--fs-sm); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .shower-hud { animation: none; }
+  .worm__sprite { transition: none; }
+  .worm__seg, .worm.is-fed .worm__sprite, .worm.is-cocoon .worm__sprite { animation: none; }
 }

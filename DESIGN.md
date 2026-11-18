@@ -188,14 +188,16 @@ UI는 레트로 게임(부팅 화면, SECTOR, GAME OVER, ◀ PREV / NEXT ▶)의
 | 본문 (prose) | `_prose.scss` | h2 앞 `▸ ` + 하단 실선, h3 시안, ul 마커 `■` 노랑, 인용문 좌측 8px 핑크 바, 이미지 테두리+그림자, 코드블록 상단에 언어 라벨 바(`C`, `C++`, `ASM`…) |
 | 빈 상태 | `.empty-state` | `NO SIGNAL…` 깜빡임 |
 | 방명록 | `guestbook.html`, `_includes/giscus.html`, `.guestbook` | kicker `SIGNAL STATION · 방명록`, `HOW TO TRANSMIT` 안내 박스 + giscus(GitHub Discussions, Announcements 카테고리의 `guestbook` 글타래) 위젯. 설정은 `_config.yml`의 `giscus:`. 미설정 시 `SIGNAL OFFLINE` 빈 상태 |
-| giscus 테마 | `assets/css/giscus.css` | iframe 내부라 사이트 토큰을 못 씀 → 토큰 값을 **직접 복사**. 토큰 변경 시 이 파일도 함께 수정. 각진 모서리, 4px 테두리 + 하드 그림자, 픽셀 폰트 버튼 |
+| giscus 테마 | `assets/css/giscus.css` | iframe 내부라 사이트 토큰을 못 씀 → 토큰 값을 **직접 복사**. 토큰 변경 시 이 파일도 함께 수정. 각진 모서리, 4px 테두리 + 하드 그림자, 픽셀 폰트 버튼. **답글(대댓글, GitHub Discussions 한계로 1단계)**: `.gsc-replies`는 `--c-space-900` 띠 + 2px `--c-space-600` 윗선, 각 `.gsc-reply`는 40px 들여쓰기 + 왼쪽 4px 핑크 바 + 픽셀 `↳`(원래 타임라인 선 `.gsc-tl-line`은 숨김), 답글끼리는 2px 점선 구분. 답글 수·작성자·시각은 픽셀 폰트. `답글 작성` 입력칸(`.gsc-reply-box .form-control`)은 2px 점선 슬롯 + 노랑 `▶` 커서, hover 시 노랑 테두리. 펼친 답글 폼(`.gsc-comment-box-is-reply`)은 핑크 테두리 |
 | 읽기 진행 게이지 | `.scroll-progress` (헤더, 포스트에서만) | 헤더 하단 테두리 위에 12px 채움 + 4px 간격의 세그먼트 바. 16px 단위로만 차오름. 섹션색 |
 | 404 | `404.html` | 큰 핑크 `404` + `GAME OVER` + `▶ CONTINUE` 버튼 |
 | 숨겨진 구역 (이스터에그 1) | `hidden-sector.html` (`/hidden-sector/`), `.hidden-sector` | 배경 우주선을 클릭(또는 코나미 코드)하면 도착. `SECTOR 00 · CLASSIFIED` → `BONUS STAGE`, 착륙장 위에 떠 있는 큰 우주선, `ACHIEVEMENT UNLOCKED` 패널(방문 횟수, localStorage), 유성우 업적(소원 전엔 `LOCKED` 회색 실루엣), `PILOT'S SECRET LOG`. 이 페이지에서는 **모든 이스터에그(우주선·유성우·키 코드)가 꺼짐**(`space-eggs.js` 첫머리에서 종료). 어디에도 링크하지 않고 `noindex`·`sitemap: false` |
 | 유성우 (이스터에그 2) | `assets/js/space-eggs.js`, `_space.scss` | 배경 행성을 클릭·탭(모바일 포함)하거나 `WISH` 입력 → 행성이 4px 흔들리고 픽셀 유성 6개가 우상→좌하로 `steps(12)` 낙하(시작점은 위쪽·오른쪽 변을 잇는 L자를 6칸으로 나눠 칸마다 하나 → 궤적 간격 균등, 순서는 섞음), 행성 위에 오락실 점수처럼 `+1 WISH` / `★ × N` 점수 팝업(`.score-pop--wish`, 노랑·핑크 픽셀 Bold + 하드 그림자)이 튀어 올랐다 사라짐. 스크린리더는 숨은 `role="status"`로 안내. 소원 수는 localStorage `serim.wishes` → 숨겨진 구역 업적 해금. 모션 감소 시 유성 없이 팝업만 제자리에 잠깐 표시 |
 | 유성 잡기 (이스터에그 2-1) | `assets/js/space-eggs.js`, `_space.scss` | 유성우가 내리는 동안 보이는 유성(불투명도 .5 이상)을 클릭·탭하면 잡힘(판정 여유 12px, 터치 20px; 빈 공간 위에서만). 그 자리에서 멈춰 흰 외곽선으로 번쩍 → 머리 위치에서 픽셀 불꽃 8개가 `steps(4)`로 튀고 → 노랑 5×5 십자 별(`.caught-star`, 4px/픽셀)이 `star-pin`(0→2배→1배)으로 하늘에 박혀 근경 별처럼 반짝임. 박힌 별은 localStorage `serim.sky`에 화면 비율 좌표로 최근 12개까지 저장 → 다음 방문에도 하늘에 남음(`.space-bg__caught`, 패럴랙스 없음). 점수 팝업 `+1 CATCH` / `☆ × N`(`.score-pop--catch`, 노랑·시안), 잡은 수 `serim.meteors`. 한 유성우의 6개를 모두 잡으면 마지막 팝업이 `PERFECT!!` / `ALL 6 CAUGHT`(`.score-pop--perfect`, 시안·노랑), `serim.meteors.perfect`. 유성 위 호버 시 노랑 외곽선 + 포인터. 모션 감소 시 유성이 없으므로 잡기도 없음(저장된 별은 정지 상태로 표시) |
+| 진짜 유성우의 밤 (이스터에그 2-2) | `assets/js/space-eggs.js`(`SHOWERS`), `_space.scss` | 실제 유성우 극대일(사분의 1/4, 거문고 4/22, 물병 에타 5/6, 페르세우스 8/12, 오리온 10/21, 사자 11/17, 쌍둥이 12/14 — 방문자 현지 날짜) **±2일** 동안: 좌하단에 HUD 태그(`.shower-hud`, `pixel-box`식 4px 테두리 + 하드 그림자, 유성 아이콘 + `METEOR SHOWER · GEMINIDS` 노랑 / `PEAK 12.14 · D-1`·`TONIGHT` 흐림, 픽셀 폰트 13px)가 `pixel-rise`로 나타나 8초 뒤 아이콘만 남게 접힘(클릭 안 받음). 동시에 4–12초마다 유성 1개가 저절로 떨어짐(`data-stray`, 같은 L자 시작선의 무작위 지점, 유성 잡기와 같은 판정). 떠돌이 유성을 잡으면 별로 박히고 `serim.meteors`에 더해지며(PERFECT에는 안 셈), **그 유성우·연도에서 처음 잡은 것**이면 `NEW LOG!` / `GEMINIDS 2026` 팝업(`.score-pop--observe`, 노랑·흰색) → `serim.showers.seen`(목록)·`serim.showers`(개수) → "유성우 관측 일지" 업적. `?shower=<id>`로 아무 날에나 미리보기. 모션 감소 시 HUD만 표시 |
 | 엿보는 외계인 (이스터에그 3) | `_includes/study-alien.html` (Study 목록 페이지만, `section.html`), `space-eggs.js`, `_space.scss` | 시안(Study 색) 12×10 픽셀 외계인(더듬이·큰 눈·가장자리를 붙잡은 손, 8px/픽셀, 모바일 4px)이 5–8초 뒤 콘텐츠 폭 안 무작위 위치에서 화면 아래 가장자리로 빼꼼 올라와 2.6초간 눈을 깜빡이다 숨음(10–18초마다 반복, 탭이 숨겨지면 대기). 숨기 전 클릭·탭(= 찌르기)하거나 `ALIEN` 입력 → 머리 위 말풍선 + 깜짝 점프, 찌를 때마다 1.4초 더 머묾. 한 번 등장에 첫 찌르기만 `+1 CONTACT` / `ALIEN × N` 점수 팝업(`.score-pop--alien`, 시안·노랑), localStorage `serim.aliens`. **기분(`data-mood`, 이번 방문의 찌른 횟수)**: 1–4 `startled` `!` → 5–7 `annoyed` `?!`(눈 가늘게) → 8–9 `furious` `!!`(V자 눈썹·찡그린 입, 핑크 말풍선) → 10 `angry` `#@!`(몸이 핑크로, 부들부들 떨림) + 페이지 흔들림 + `ANGRY!!` / `DON'T POKE ME` 팝업(`.score-pop--angry`) → 퇴장 후 이 탭에선 다시 안 나옴(sessionStorage `serim.alien.sulk`, `ALIEN` 입력 시 `STILL ANGRY`). 화난 횟수 localStorage `serim.aliens.angry` → "외교 실패" 업적. 얼굴 레이어는 SVG `<g>`(`__lids`/`__squint`/`__rage`), 피부색은 `.alien__skin` + `--alien-skin`. 모션 감소 시 미끄러짐·점프 없이 나타났다 사라짐 |
-| 숨겨진 구역 업적 | `hidden-sector.html` | 이스터에그별 업적 칸은 `data-unlock`(localStorage 키) + `data-title`/`data-desc`(`{n}` = 횟수)로 선언 → 카운터 > 0이면 해금. 색은 `--achv-accent`/`--achv-trophy` modifier(`--wish` 핑크, `--alien` 시안, `--angry` 핑크, `--catch` 노랑 "별 사냥꾼", `--perfect` 시안 "퍼펙트 캐치") |
+| 책벌레 (이스터에그 4) | `_includes/reading-worm.html` (Reading 목록 페이지만, `section.html`), `space-eggs.js`, `_space.scss` | 성운 핑크(Reading 색) 안경 쓴 책벌레(5줄 높이: 1px 꼬리 + 2px 마디 N개 + 4×4 머리, 마디 윗점 흰색 하이라이트, 8px/픽셀, 모바일 4px). 스프라이트는 길이가 변하므로 JS가 그려 `.worm__hole`(overflow hidden)에 넣음. 4–7초 뒤, 화면에 보이는 책 카드(`.post-card`, 글이 없으면 `.empty-state`)의 **윗변에서** 400ms `steps(4)`로 빠져나와 3.2초간 2픽셀씩 4번 자벌레처럼 전진(WAAPI `translate`, `steps(4)`) + 마디가 번갈아 1픽셀씩 들썩(`worm-wiggle`) → 다시 책 속으로(9–16초마다 반복, 페이지 좌표라 스크롤해도 카드에 붙어 있음, 리사이즈 시 숨음). 클릭·탭하거나 `BOOK` 입력 → 책장 하나를 먹고 머리 위 `NOM!`(4번째는 `BURP`) + 오물오물(`worm-munch`), 꼬리 쪽으로 한 마디 자람(이번 방문 동안 유지), 1.6초 더 머묾, 먹일 때마다 `+1 PAGE` / `PAGE × N`(`.score-pop--worm`, 핑크·노랑), localStorage `serim.worms`. **5번째**에 머리 자리에서 고치로 변해 떨다가(.9초) 7×6 픽셀 나비(`.butterfly`, 날개 `butterfly-flap` .24s)가 지그재그로 화면 위로 날아감(WAAPI 2s `steps(16)`) + `METAMORPHOSIS!` / `BOOKWORM ▶ BUTTERFLY`(`.score-pop--butterfly`, 핑크·시안), `serim.worms.butterfly` → "탈바꿈" 업적, 이 탭에선 다시 안 나옴(sessionStorage `serim.worm.flown`, `BOOK` 입력 시 `IT FLEW AWAY`). 모션 감소 시 슬라이드·전진·들썩임·비행 없이 나타났다 사라짐 |
+| 숨겨진 구역 업적 | `hidden-sector.html` | 이스터에그별 업적 칸은 `data-unlock`(localStorage 키) + `data-title`/`data-desc`(`{n}` = 횟수)로 선언 → 카운터 > 0이면 해금. 색은 `--achv-accent`/`--achv-trophy` modifier(`--wish` 핑크, `--alien` 시안, `--angry` 핑크, `--catch` 노랑 "별 사냥꾼", `--perfect` 시안 "퍼펙트 캐치", `--observe` 노랑·흰 망원경 "유성우 관측 일지", `--worm` 핑크 책 "책벌레 사육사", `--butterfly` 핑크·노랑 나비 "탈바꿈") |
 | 푸터 | `_includes/footer.html` | 픽셀 캐럿 + ©, GitHub · `맨 위로 ▲` |
 
 ---
@@ -227,6 +229,13 @@ UI는 레트로 게임(부팅 화면, SECTOR, GAME OVER, ◀ PREV / NEXT ▶)의
 | `alien-startle` | 찔린 외계인 (찌를 때마다 재시작) | .48s `steps(4)`, 24px 점프 |
 | `alien-rage` | 화난 외계인 | .24s `steps(2)` 무한, 좌우 4px |
 | 페이지 흔들림 | 외계인이 화났을 때 `.site-main` | WAAPI `translate` 480ms `steps(6)`, 8px |
+| 책벌레 등장/퇴장 | 책벌레 스프라이트 | `transform` 400ms `steps(4)` 트랜지션 (카드 윗변 아래 → 위) |
+| 책벌레 전진 | `.worm` | WAAPI `translate` 3.2s `steps(4)`, 8 스프라이트 픽셀(64px) |
+| `worm-wiggle` | 책벌레 마디 (짝·홀 반 박자 차이) | .6s `steps(1)` 무한, 1 스프라이트 픽셀 |
+| `worm-munch` | 먹은 책벌레 | .32s `steps(2)` × 2, 4px |
+| 고치 떨림 | 탈바꿈 직전 | `alien-rage` 재사용 |
+| 나비 비행 / `butterfly-flap` | 날아가는 나비 / 날개 | WAAPI 2s `steps(16)` 지그재그 / .24s `steps(1)` 무한 (scaleX .34) |
+| 떠돌이 유성 | 진짜 유성우 기간 | `meteor`와 동일, 4–12초 간격 1개씩 |
 | `blink` | 커서, NO SIGNAL | 1–1.2s `steps(2, start)` |
 | 타이핑 | 홈 히어로 | JS `setTimeout` 글자 단위(28 / 90 / 60ms ±30%), 줄 사이 300–450ms 쉼 |
 
@@ -291,8 +300,9 @@ assets/css/giscus.css giscus iframe용 테마 (Sass 미처리, 토큰 값 수동
 assets/js/nav.js      모바일 햄버거 메뉴
 assets/js/scroll-fx.js 스크롤 효과
 assets/js/typing.js    홈 히어로 타이핑 인트로
-assets/js/space-eggs.js 이스터에그 (우주선 클릭 / 코나미 코드 → /hidden-sector/, 행성 클릭 / WISH → 유성우, 유성 클릭 → 잡아서 하늘에 별로, Study 외계인 클릭 / ALIEN → 접촉)
+assets/js/space-eggs.js 이스터에그 (우주선 클릭 / 코나미 코드 → /hidden-sector/, 행성 클릭 / WISH → 유성우, 유성 클릭 → 잡아서 하늘에 별로, 실제 유성우 기간 HUD + 떠돌이 유성, Study 외계인 클릭 / ALIEN → 접촉, Reading 책벌레 클릭 / BOOK → 먹이기·탈바꿈)
 _includes/study-alien.html 엿보는 외계인 스프라이트 (Study 목록에서만 include)
+_includes/reading-worm.html 책벌레 컨테이너 (Reading 목록에서만 include, 스프라이트는 JS가 그림)
 ```
 
 새 스타일은 역할에 맞는 파일에 추가하고, 재사용될 패턴이면 `_pixel.scss`/`_components.scss`로 올립니다.
@@ -314,3 +324,4 @@ _includes/study-alien.html 엿보는 외계인 스프라이트 (Study 목록에�
 | 2026-11-12 | 퀘스트 로그 창 안쪽 선을 섹션색 → `--c-space-600`으로 낮추고, 섹션색은 모서리 12px 브래킷에만 사용(눈부심 완화) |
 | 2026-11-12 | 홈 히어로에 터미널 타이핑 인트로 추가(`typing.js`, `.fx-type`, 세션당 1회) |
 | 2026-11-16 | 이스터에그 2-1 — 유성우의 유성을 클릭·탭해 잡기: 불꽃 + 하늘에 별로 남음(`serim.sky`), 6개 전부 잡으면 PERFECT. `.score-pop--{catch,perfect}`, 숨겨진 구역 업적 "별 사냥꾼"·"퍼펙트 캐치" |
+| 2026-11-18 | 이스터에그 2-2 — 실제 유성우 극대일 ±2일에 HUD 태그(`.shower-hud`) + 떠돌이 유성, 첫 포획 시 관측 일지(`serim.showers`). 이스터에그 4 — Reading 책벌레(`reading-worm.html`, `BOOK`, 5번 먹이면 나비). `.score-pop--{observe,worm,butterfly}`, 업적 3개 추가. giscus 테마에 답글(대댓글) 스타일 추가 |

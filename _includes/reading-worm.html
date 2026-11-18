@@ -1,0 +1,11 @@
+{%- comment -%}
+  Easter egg 4 — the bookworm (Reading page only, see section.html).
+  Starts hidden; assets/js/space-eggs.js pokes it out of the top edge of a
+  book card now and then and draws its sprite into .worm__hole (the sprite
+  changes length as it eats). Click/tap it (or type "book") to feed it a
+  page; feed it 5 times and it turns into a butterfly. Decorative → aria-hidden.
+{%- endcomment -%}
+<div class="worm" data-worm hidden aria-hidden="true">
+  <span class="worm__alert">NOM!</span>
+  <span class="worm__hole"></span>
+</div>
